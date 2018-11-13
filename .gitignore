@@ -1,0 +1,10 @@
+# compiled files
+obj
+bin
+PublishProfiles
+log4net
+# user files
+*.user
+*.suo
+.vs
+.svn

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D99343A5-7D5C-4431-B809-8D45A4C67785}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tesla.App</RootNamespace>
+    <AssemblyName>Tesla.App</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Tesla.Libs\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.10.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Tesla.Libs\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Tesla.Libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\ConnectionFactory.cs" />
+    <Compile Include="Helpers\DBHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemManage\AreaApp.cs" />
+    <Compile Include="SystemManage\DutyApp.cs" />
+    <Compile Include="SystemManage\ItemsApp.cs" />
+    <Compile Include="SystemManage\ItemsDetailApp.cs" />
+    <Compile Include="SystemManage\ModuleApp.cs" />
+    <Compile Include="SystemManage\ModuleButtonApp.cs" />
+    <Compile Include="SystemManage\OrganizeApp.cs" />
+    <Compile Include="SystemManage\RoleApp.cs" />
+    <Compile Include="SystemManage\RoleAuthorizeApp.cs" />
+    <Compile Include="SystemManage\UserApp.cs" />
+    <Compile Include="SystemManage\UserLogOnApp.cs" />
+    <Compile Include="SystemSecurity\DbBackupApp.cs" />
+    <Compile Include="SystemSecurity\FilterIPApp.cs" />
+    <Compile Include="SystemSecurity\LogApp.cs" />
+    <Compile Include="Tesla\AppLogApp.cs" />
+    <Compile Include="Tesla\BetOrderApp.cs" />
+    <Compile Include="Tesla\BetParamApp.cs" />
+    <Compile Include="Tesla\WithdrawApp.cs" />
+    <Compile Include="Tesla\ChargeApp.cs" />
+    <Compile Include="Tesla\TaskApp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tesla.Model\Tesla.Model.csproj">
+      <Project>{9d411ed4-cc62-46e1-b83e-f5fbee0b1831}</Project>
+      <Name>Tesla.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tesla.Utils\Tesla.Utils.csproj">
+      <Project>{98e8a861-65b6-4d7f-9678-bb3f2a67b8fb}</Project>
+      <Name>Tesla.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
