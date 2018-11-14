@@ -14,7 +14,7 @@ namespace Tesla
         /// 登录
         /// </summary>
         /// <param name="param"></param>
-        public static ApiResponse<LoginReponse> Login(LoginParams param)
+        public static ApiResponse<LoginResponse> Login(LoginParams param)
         {
             Dictionary<string, string> headerDic = new Dictionary<string, string>
             {
@@ -30,7 +30,7 @@ namespace Tesla
             };
 
             string result = HttpHelper.HttpPost(param.LoginApi + "/user/login", paramDic, headerDic, null);
-            ApiResponse<LoginReponse> reponse = result.ToEntity<ApiResponse<LoginReponse>>();
+            ApiResponse<LoginResponse> reponse = result.ToEntity<ApiResponse<LoginResponse>>();
             return reponse;
         }
     }

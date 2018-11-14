@@ -37,5 +37,10 @@ namespace Tesla.Model
         /// 
         /// </summary>
         public BetParams BetParam => this.Params.ToEntity<BetParams>();
+
+        /// <summary>
+        /// 短消息
+        /// </summary>
+        public string ShortParams => this.Params.Length > 100 ? this.Params.Substring(0, 100) + "..." : this.Params;
     }
 }

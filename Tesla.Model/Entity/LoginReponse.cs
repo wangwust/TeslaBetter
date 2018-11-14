@@ -3,7 +3,7 @@
     /// <summary>
     /// 登录响应
     /// </summary>
-    public class LoginReponse
+    public class LoginResponse
     {
         /// <summary>
         /// 账户余额

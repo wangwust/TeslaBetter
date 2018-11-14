@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Mvc;
 using Tesla.App;
 using Tesla.Model;
 using Tesla.Utils;
 using Tesla.Web.Areas.Tesla.Model;
 
-namespace Tesla.Web.Areas.Tesla
+namespace Tesla.Web.Areas.Tesla.Controllers
 {
     /// <summary>
     /// 充值记录

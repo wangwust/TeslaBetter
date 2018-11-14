@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tesla.Server.Service;
+using Tesla.Client.Service;
 
 namespace Tesla.Test
 {

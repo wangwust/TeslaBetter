@@ -373,9 +373,10 @@
     <Compile Include="Areas\SystemSecurity\Controllers\LogController.cs" />
     <Compile Include="Areas\SystemSecurity\Controllers\ServerMonitoringController.cs" />
     <Compile Include="Areas\SystemSecurity\SystemSecurityAreaRegistration.cs" />
-    <Compile Include="Areas\Tesla\ChargeController.cs" />
+    <Compile Include="Areas\Tesla\Controllers\ChargeController.cs" />
     <Compile Include="Areas\Tesla\Controllers\AppLogController.cs" />
     <Compile Include="Areas\Tesla\Controllers\BetOrderController.cs" />
+    <Compile Include="Areas\Tesla\Controllers\BetParamController.cs" />
     <Compile Include="Areas\Tesla\Controllers\TaskController.cs" />
     <Compile Include="Areas\Tesla\Controllers\WithdrawController.cs" />
     <Compile Include="Areas\Tesla\Model\AppLogParam.cs" />
@@ -471,6 +472,8 @@
     <Content Include="Areas\Tesla\Views\Charge\Form.cshtml" />
     <Content Include="Areas\Tesla\Views\Withdraw\Form.cshtml" />
     <Content Include="Areas\Tesla\Views\Withdraw\Index.cshtml" />
+    <Content Include="Areas\Tesla\Views\BetParam\Index.cshtml" />
+    <Content Include="Areas\Tesla\Views\BetParam\Details.cshtml" />
     <None Include="Properties\PublishProfiles\1.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

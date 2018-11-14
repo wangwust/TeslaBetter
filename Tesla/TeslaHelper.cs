@@ -162,7 +162,7 @@ namespace Tesla
         /// <param name="task"></param>
         /// <param name="loginResponse"></param>
         /// <returns></returns>
-        public static decimal GetBalance(string api, LoginReponse loginResponse)
+        public static decimal GetBalance(string api, LoginResponse loginResponse)
         {
             if (loginResponse == null || string.IsNullOrEmpty(loginResponse.token))
             {
@@ -207,7 +207,7 @@ namespace Tesla
             {
                 try
                 {
-                    ApiResponse<LoginReponse> response = LoginHelper.Login(param);
+                    ApiResponse<LoginResponse> response = LoginHelper.Login(param);
                     if (response.IsSucceed)
                     {
                         return GetBalance(task.ClientApi, response.data);
@@ -248,7 +248,7 @@ namespace Tesla
             {
                 try
                 {
-                    ApiResponse<LoginReponse> response = LoginHelper.Login(param);
+                    ApiResponse<LoginResponse> response = LoginHelper.Login(param);
                     if (response.IsSucceed)
                     {
                         return GetBalance(task.ServerApi, response.data);
@@ -342,6 +342,20 @@ namespace Tesla
             {
                 Log4NetHelper.Error(typeof(TeslaHelper), $"停止任务失败。任务：{task.ToJson()}");
             }
+        }
+
+        /// <summary>
+        /// 是否需要重新登录
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="loginResponse"></param>
+        /// <returns></returns>
+        public static bool NeedReLogin(AppTask task, LoginResponse loginResponse, int source)
+        {
+            string userName = source == SourceEnum.Server ? task.ServerUserName : task.ClientUserName;
+            string platformId = source == SourceEnum.Server ? GetPlatformId(task.ServerCode) : GetPlatformId(task.ClientCode);
+
+            return userName != loginResponse.userName || platformId != loginResponse.companyPlatformID;
         }
     }
 }

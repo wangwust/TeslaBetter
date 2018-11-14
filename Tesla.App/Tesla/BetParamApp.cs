@@ -1,4 +1,6 @@
-﻿using Tesla.Model;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Tesla.Model;
 
 namespace Tesla.App
 {
@@ -28,6 +30,16 @@ namespace Tesla.App
         }
 
         /// <summary>
+        /// 取列表
+        /// </summary>
+        /// <returns></returns>
+        public static List<AppBetParam> GetList()
+        {
+            string sql = "select * from app_betparam";
+            return DBHelper.GetList<AppBetParam>(sql).ToList();
+        }
+
+        /// <summary>
         /// 删除
         /// </summary>
         /// <returns></returns>
@@ -35,6 +47,17 @@ namespace Tesla.App
         {
             string sql = "delete from app_betparam where ID=@id";
             return DBHelper.Execute(sql, new { id });
+        }
+
+        /// <summary>
+        /// 获取实体
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static AppBetParam GetForm(int id)
+        {
+            string sql = "select * from app_betparam where ID=@id";
+            return DBHelper.GetOne<AppBetParam>(sql, new { id });
         }
 
         /// <summary>

@@ -49,6 +49,10 @@ namespace Tesla.App
         public static int UpdateState(AppTask task)
         {
             string sql = $"update app_task set State = @State, UpdateTime=now(), LastStopReason=@LastStopReason where ID=@ID";
+            if(task.State == 1)
+            {
+                sql = $"update app_task set State = @State, UpdateTime=now() where ID=@ID";
+            }
             return DBHelper.Execute(sql, task);
         }
 

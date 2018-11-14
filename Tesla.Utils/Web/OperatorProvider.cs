@@ -40,7 +40,7 @@
         {
             if (LoginProvider == "Cookie")
             {
-                WebHelper.WriteCookie(LoginUserKey, DESHelper.Encrypt(operatorModel.ToJson()), 60);
+                WebHelper.WriteCookie(LoginUserKey, DESHelper.Encrypt(operatorModel.ToJson()), 12 * 60);
             }
             else
             {

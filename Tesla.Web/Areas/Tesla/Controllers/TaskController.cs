@@ -96,7 +96,7 @@ namespace Tesla.Web.Areas.Tesla.Controllers
                 ClientType = device.Trim()
             };
 
-            ApiResponse<LoginReponse> response = LoginHelper.Login(param);
+            ApiResponse<LoginResponse> response = LoginHelper.Login(param);
             if (response.IsSucceed)
             {
                 return Success($"登录成功。当前账户余额：{response.data.accountBalance}");

@@ -68,7 +68,7 @@ namespace Tesla
         /// <param name="response"></param>
         /// <param name="numList"></param>
         /// <returns></returns>
-        public static BetParams GetBetParams(LoginReponse response, List<string> numList, decimal money)
+        public static BetParams GetBetParams(LoginResponse response, List<string> numList, decimal money)
         {
             List<BetInfo> list = (from s in numList
                                   select new BetInfo

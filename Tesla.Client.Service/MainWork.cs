@@ -17,7 +17,7 @@ namespace Tesla.Client.Service
         /// </summary>
         public void Run()
         {
-            Log4NetHelper.Info(typeof(MainWork), $"客户端已经启动");
+            TeslaHelper.WriteLog(0, "", LogTypeEnum.INFO, $"客户端已经启动", SourceEnum.Client, "");
             try
             {
                 this.Start();
@@ -36,8 +36,7 @@ namespace Tesla.Client.Service
             AppTask appTask = TaskApp.GetOne();
             if (appTask == null)
             {
-                Log4NetHelper.Info(typeof(MainWork), "没有可用的任务");
-                Thread.Sleep(5 * 60 * 1000);
+                TeslaHelper.WriteLog(0, "", LogTypeEnum.WARN, "没有可执行的任务", SourceEnum.Client, "");
                 return;
             }
 
@@ -49,8 +48,8 @@ namespace Tesla.Client.Service
                 return;
             }
 
-            Log4NetHelper.Info(typeof(MainWork), $"[客户端]开始执行任务：{appTask.Name}");
-            ApiResponse<LoginReponse> response = this.Login(appTask);
+            TeslaHelper.WriteLog(0, "", LogTypeEnum.WARN, $"[客户端]开始执行任务：{appTask.Name}", SourceEnum.Client, "");
+            ApiResponse<LoginResponse> response = this.Login(appTask);
             if (!response.IsSucceed)
             {
                 TeslaHelper.WriteLog(appTask.ID, appTask.Name, LogTypeEnum.ERROR, $"登录失败。信息" + response.msg, SourceEnum.Client, appTask.ClientUserName);
@@ -58,7 +57,7 @@ namespace Tesla.Client.Service
                 return;
             }
 
-            LoginReponse loginResponse = response.data;
+            LoginResponse loginResponse = response.data;
             this.BetByMysql(appTask, loginResponse);
         }
 
@@ -67,7 +66,7 @@ namespace Tesla.Client.Service
         /// </summary>
         /// <param name="task"></param>
         /// <param name="loginResponse"></param>
-        private void BetByMysql(AppTask task, LoginReponse loginResponse)
+        private void BetByMysql(AppTask task, LoginResponse loginResponse)
         {
             while (true)
             {
@@ -77,17 +76,28 @@ namespace Tesla.Client.Service
                     string errorMsg = string.Empty;
                     if (!TeslaHelper.CheckTaskParam(task, ref errorMsg))
                     {
-                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, errorMsg, SourceEnum.Client, task.ClientUserName);
-                        Thread.Sleep(5 * 60 * 1000);
-                        continue;
-                    }
-
-                    AppBetParam betParam = BetParamApp.GetOne();
-                    if (betParam == null)
-                    {
                         Thread.Sleep(10 * 1000);
                         continue;
                     }
+
+                    //是否需要重新登录
+                    if (TeslaHelper.NeedReLogin(task, loginResponse, SourceEnum.Client))
+                    {
+                        ApiResponse<LoginResponse> newLogin = this.Login(task);
+                        if (newLogin.IsSucceed)
+                        {
+                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[客户端]任务信息变更，重新登录成功。", SourceEnum.Client, task.ClientUserName);
+                            loginResponse = newLogin.data;
+                        }
+                        else
+                        {
+                            TeslaHelper.StopTask(task.ID, TaskStopReason.ServerToken);
+                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[客户端]任务信息变更，重新登录失败，已将：{task.Name}停止。", SourceEnum.Client, task.ClientUserName);
+                            continue;
+                        }
+                    }
+
+                    AppBetParam betParam = this.GetBetParam();
 
                     BetParams param = betParam.BetParam;
                     if (param == null)
@@ -106,7 +116,27 @@ namespace Tesla.Client.Service
                 catch (Exception ex)
                 {
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"[客户端]投注异常。详情：{ex.ToString()}", SourceEnum.Client, task.ClientUserName);
+                }
+            }
+        }
 
+        /// <summary>
+        /// 读取投注内容
+        /// </summary>
+        /// <returns></returns>
+        private AppBetParam GetBetParam()
+        {
+            AppBetParam betParam = null;
+            while (true)
+            {
+                betParam = BetParamApp.GetOne();
+                if (betParam != null)
+                {
+                    return betParam;
+                }
+                else
+                {
+                    Thread.Sleep(10 * 1000);
                 }
             }
         }
@@ -116,7 +146,7 @@ namespace Tesla.Client.Service
         /// </summary>
         /// <param name="task"></param>
         /// <param name="loginResponse"></param>
-        private void BetByMQ(AppTask task, LoginReponse loginResponse)
+        private void BetByMQ(AppTask task, LoginResponse loginResponse)
         {
             try
             {
@@ -135,7 +165,7 @@ namespace Tesla.Client.Service
         /// 投注
         /// </summary>
         /// <param name="param"></param>
-        private bool Bet(AppTask task, LoginReponse loginResponse, BetParams param)
+        private bool Bet(AppTask task, LoginResponse loginResponse, BetParams param)
         {
             if (param == null)
             {
@@ -162,7 +192,7 @@ namespace Tesla.Client.Service
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{param.Issue}]期[客户端]投注成功。投注总额：{param.NumList.Count * task.SingleMoney}。投注信息：{param.ToJson()}", SourceEnum.Client, task.ClientUserName);
                     TeslaHelper.SaveBetOrder(task, param.NumList, param.Issue, clientBalance, SourceEnum.Client);
 
-                    decimal balance = TeslaHelper.GetBalance(task.ClientApi, loginResponse);
+                    decimal balance = clientBalance - param.NumList.Count * task.SingleMoney;
                     if (balance < task.SingleMoney * (49 - task.ServerMinNumCount))
                     {
                         TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[客户端]余额仅剩{balance}，任务停止。", SourceEnum.Client, task.ClientUserName);
@@ -182,7 +212,7 @@ namespace Tesla.Client.Service
                 if (response.msg.ToLower().Contains("token"))
                 {
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"当前用户已掉线，即将重新登录", SourceEnum.Client, task.ClientUserName);
-                    ApiResponse<LoginReponse> newLogin = this.Login(task);
+                    ApiResponse<LoginResponse> newLogin = this.Login(task);
                     if (newLogin.IsSucceed)
                     {
                         loginResponse = newLogin.data;
@@ -221,7 +251,7 @@ namespace Tesla.Client.Service
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        private ApiResponse<LoginReponse> Login(AppTask task)
+        private ApiResponse<LoginResponse> Login(AppTask task)
         {
             LoginParams param = new LoginParams
             {
@@ -233,7 +263,7 @@ namespace Tesla.Client.Service
             };
 
             int loops = 10, index = 0;
-            ApiResponse<LoginReponse> response = null;
+            ApiResponse<LoginResponse> response = null;
             while (index < loops)
             {
                 try
@@ -251,7 +281,7 @@ namespace Tesla.Client.Service
 
             if (response == null)
             {
-                response = new ApiResponse<LoginReponse> { msg = "登录失败", code = -1 };
+                response = new ApiResponse<LoginResponse> { msg = "登录失败", code = -1 };
             }
 
             return response;
