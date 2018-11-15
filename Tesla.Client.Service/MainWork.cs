@@ -97,7 +97,12 @@ namespace Tesla.Client.Service
                         }
                     }
 
-                    AppBetParam betParam = this.GetBetParam();
+                    AppBetParam betParam = BetParamApp.GetOne();
+                    if (betParam == null)
+                    {
+                        Thread.Sleep(10 * 1000);
+                        continue;
+                    }
 
                     BetParams param = betParam.BetParam;
                     if (param == null)
@@ -185,10 +190,10 @@ namespace Tesla.Client.Service
 
             try
             {
-                decimal clientBalance = TeslaHelper.GetBalance(task.ClientApi, loginResponse);
                 ApiResponse<BetResponse> response = BetHelper.Bet(param);
                 if (response.IsSucceed)
                 {
+                    decimal clientBalance = TeslaHelper.GetBalance(task.ClientApi, loginResponse);
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{param.Issue}]期[客户端]投注成功。投注总额：{param.NumList.Count * task.SingleMoney}。投注信息：{param.ToJson()}", SourceEnum.Client, task.ClientUserName);
                     TeslaHelper.SaveBetOrder(task, param.NumList, param.Issue, clientBalance, SourceEnum.Client);
 

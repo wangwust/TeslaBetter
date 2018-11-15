@@ -318,8 +318,8 @@ namespace Tesla
                 SingleMoney = task.SingleMoney,
                 TotalMoney = task.SingleMoney * list.Count,
                 Source = source,
-                BeforeBalance = balance,
-                AfterBalance = balance - task.SingleMoney * list.Count,
+                BeforeBalance = balance + task.SingleMoney * list.Count,
+                AfterBalance = balance,
                 UserName = source == 1 ? task.ServerUserName : task.ClientUserName
             };
 
