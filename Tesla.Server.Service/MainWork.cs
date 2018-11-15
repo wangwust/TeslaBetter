@@ -30,6 +30,14 @@ namespace Tesla.Server.Service
         }
 
         /// <summary>
+        /// 停止
+        /// </summary>
+        public void Stop()
+        {
+            TeslaHelper.WriteLog(0, "", LogTypeEnum.INFO, $"服务端已经停止", SourceEnum.Server, "");
+        }
+
+        /// <summary>
         /// 执行
         /// </summary>
         private void Start()
@@ -128,13 +136,13 @@ namespace Tesla.Server.Service
                         ApiResponse<LoginResponse> newLogin = this.Login(task);
                         if (newLogin.IsSucceed)
                         {
-                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[服务端]任务信息变更，重新登录成功。期号{issueInfo.IssueNo}", SourceEnum.Server, task.ServerUserName);
+                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[服务端]任务信息变更，重新登录成功。期号：{issueInfo.IssueNo}", SourceEnum.Server, task.ServerUserName);
                             loginResponse = newLogin.data;
                         }
                         else
                         {
                             TeslaHelper.StopTask(task.ID, TaskStopReason.ServerToken);
-                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[服务端]任务信息变更，重新登录失败，已将：{task.Name}停止。期号{issueInfo.IssueNo}", SourceEnum.Server, task.ServerUserName);
+                            TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[服务端]任务信息变更，重新登录失败，已将：{task.Name}停止。期号：{issueInfo.IssueNo}", SourceEnum.Server, task.ServerUserName);
                             continue;
                         }
                     }

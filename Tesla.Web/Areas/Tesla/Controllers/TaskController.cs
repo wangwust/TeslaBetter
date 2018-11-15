@@ -70,6 +70,15 @@ namespace Tesla.Web.Areas.Tesla.Controllers
             {
                 task.LastStopReason = TaskStopReason.Manual;
             }
+            else if(state == 1)
+            {
+                string errorMsg = string.Empty;
+                if (!TeslaHelper.CheckCanStartTask(keyValue, ref errorMsg))
+                {
+                    return Error("任务不满足启动条件。原因：" + errorMsg);
+                }
+            }
+
             int result = TaskApp.UpdateState(task);
             return Auto(result);
         }

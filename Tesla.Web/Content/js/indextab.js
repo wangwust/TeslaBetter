@@ -270,10 +270,10 @@
             $('.fullscreen').on('click', function () {
                 if (!$(this).attr('fullscreen')) {
                     $(this).attr('fullscreen', 'true');
-                    requestFullScreen();
+                    $.robotab.requestFullScreen();
                 } else {
                     $(this).removeAttr('fullscreen')
-                    exitFullscreen();
+                    $.robotab.exitFullscreen();
                 }
             });
         }

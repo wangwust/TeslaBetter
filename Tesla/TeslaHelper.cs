@@ -157,6 +157,74 @@ namespace Tesla
         }
 
         /// <summary>
+        /// 检查任务是否可以启动
+        /// </summary>
+        /// <param name="keyValue"></param>
+        /// <param name="errorMsg"></param>
+        /// <returns></returns>
+        public static bool CheckCanStartTask(int keyValue, ref string errorMsg)
+        {
+            AppTask task = TaskApp.GetOne(keyValue);
+            if (task == null)
+            {
+                errorMsg = "任务不存在";
+                return false;
+            }
+
+            //校验服务端
+            LoginParams param = new LoginParams
+            {
+                LoginApi = task.ServerApi.Trim(),
+                PlatformId = GetPlatformId(task.ServerCode.Trim()),
+                UserName = task.ServerUserName.Trim(),
+                Password = task.ServerUserPwd.Trim(),
+                ClientType = task.ServerDeviceType.Trim()
+            };
+
+            ApiResponse<LoginResponse> response = LoginHelper.Login(param);
+            if (!response.IsSucceed)
+            {
+                errorMsg = "服务端登录失败，" + response.msg;
+                return false;
+            }
+
+            decimal balance = response.data == null ? 0 : response.data.accountBalance;
+            decimal money = task.ServerMaxNumCount * task.SingleMoney;
+            if (balance < money)
+            {
+                errorMsg = $"服务端账户余额：{balance}，不足一次投注：{money}";
+                return false;
+            }
+
+            //校验客户端
+            param = new LoginParams
+            {
+                LoginApi = task.ClientApi.Trim(),
+                PlatformId = GetPlatformId(task.ClientCode.Trim()),
+                UserName = task.ClientUserName.Trim(),
+                Password = task.ClientUserPwd.Trim(),
+                ClientType = task.ClientDeviceType.Trim()
+            };
+
+            response = LoginHelper.Login(param);
+            if (!response.IsSucceed)
+            {
+                errorMsg = "客户端登录失败，" + response.msg;
+                return false;
+            }
+
+            balance = response.data == null ? 0 : response.data.accountBalance;
+            money = (49 - task.ServerMinNumCount) * task.SingleMoney;
+            if (balance < money)
+            {
+                errorMsg = $"客户端账户余额：{balance}，不足一次投注：{money}";
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 获取余额
         /// </summary>
         /// <param name="task"></param>

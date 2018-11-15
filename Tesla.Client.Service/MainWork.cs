@@ -29,6 +29,14 @@ namespace Tesla.Client.Service
         }
 
         /// <summary>
+        /// 停止
+        /// </summary>
+        public void Stop()
+        {
+            TeslaHelper.WriteLog(0, "", LogTypeEnum.INFO, $"客户端端已经停止", SourceEnum.Client, "");
+        }
+
+        /// <summary>
         /// 开始执行
         /// </summary>
         private void Start()
