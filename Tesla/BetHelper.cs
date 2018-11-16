@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tesla.Model;
 using Tesla.Utils;
 
@@ -27,11 +25,12 @@ namespace Tesla
         {
             Dictionary<string, string> headerDic = new Dictionary<string, string>
             {
-                { "Client-Type", TeslaEnum.ClientType },
+                { "Client-Type", param.ClientType },
                 { "staffid", param.PlatformId },
                 { "username", param.UserName },
                 { "timestamp", DateTime.Now.ToTimestamp().ToString() },
                 { "token", param.Token },
+                { "x-forwarded-for", param.IP }
             };
 
             Dictionary<string, string> paramDic = new Dictionary<string, string>
@@ -40,7 +39,7 @@ namespace Tesla
                 { "PeriodNumber", param.Issue },
             };
 
-            string result = HttpHelper.HttpPost(param.BetApi + "/order/bet/85", paramDic, headerDic, null);
+            string result = HttpHelper.HttpPost(param.Api + "/order/bet/85", paramDic, headerDic, null);
             ApiResponse<BetResponse> reponse = result.ToEntity<ApiResponse<BetResponse>>();
             return reponse;
         }
@@ -81,7 +80,7 @@ namespace Tesla
                 UserName = response.userName,
                 PlatformId = response.companyPlatformID,
                 Token = response.token,
-                BetInfo = list.ToJson()
+                BetInfo = list.ToJson(),
             };
         }
     }

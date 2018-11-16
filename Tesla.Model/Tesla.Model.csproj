@@ -66,6 +66,7 @@
     <Compile Include="DataBases\Tesla\Withdraw.cs" />
     <Compile Include="Entity\BalanceParams.cs" />
     <Compile Include="Entity\BalanceResponse.cs" />
+    <Compile Include="Entity\BaseParams.cs" />
     <Compile Include="Entity\BetInfo.cs" />
     <Compile Include="Entity\BetParams.cs" />
     <Compile Include="Entity\BetResponse.cs" />

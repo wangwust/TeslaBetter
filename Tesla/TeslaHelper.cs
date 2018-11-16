@@ -99,6 +99,12 @@ namespace Tesla
                 return false;
             }
 
+            if (appTask.ServerIP.IsEmpty())
+            {
+                errorMsg = "服务端IP不能为空";
+                return false;
+            }
+
             if (appTask.ClientCode.IsEmpty())
             {
                 errorMsg = "客户端代码不能为空";
@@ -126,6 +132,12 @@ namespace Tesla
             if (appTask.ClientDeviceType.IsEmpty())
             {
                 errorMsg = "客户端设备类型不能为空";
+                return false;
+            }
+
+            if (appTask.ClientIP.IsEmpty())
+            {
+                errorMsg = "客户端IP不能为空";
                 return false;
             }
 
@@ -174,7 +186,7 @@ namespace Tesla
             //校验服务端
             LoginParams param = new LoginParams
             {
-                LoginApi = task.ServerApi.Trim(),
+                Api = task.ServerApi.Trim(),
                 PlatformId = GetPlatformId(task.ServerCode.Trim()),
                 UserName = task.ServerUserName.Trim(),
                 Password = task.ServerUserPwd.Trim(),
@@ -199,7 +211,7 @@ namespace Tesla
             //校验客户端
             param = new LoginParams
             {
-                LoginApi = task.ClientApi.Trim(),
+                Api = task.ClientApi.Trim(),
                 PlatformId = GetPlatformId(task.ClientCode.Trim()),
                 UserName = task.ClientUserName.Trim(),
                 Password = task.ClientUserPwd.Trim(),
@@ -230,7 +242,7 @@ namespace Tesla
         /// <param name="task"></param>
         /// <param name="loginResponse"></param>
         /// <returns></returns>
-        public static decimal GetBalance(string api, LoginResponse loginResponse)
+        public static decimal GetBalance(string api, string ip, LoginResponse loginResponse)
         {
             if (loginResponse == null || string.IsNullOrEmpty(loginResponse.token))
             {
@@ -242,7 +254,8 @@ namespace Tesla
                 UserName = loginResponse.userName,
                 Token = loginResponse.token,
                 PlatformId = loginResponse.companyPlatformID,
-                BalanceApi = api
+                Api = api,
+                IP = ip
             };
 
             ApiResponse<BalanceResponse> response = BalanceHelper.GetBalance(param);
@@ -265,9 +278,10 @@ namespace Tesla
             {
                 UserName = task.ClientUserName,
                 Password = task.ClientUserPwd,
-                LoginApi = task.ClientApi,
+                Api = task.ClientApi,
                 PlatformId = GetPlatformId(task.ClientCode),
-                ClientType = task.ClientDeviceType
+                ClientType = task.ClientDeviceType,
+                IP = task.ClientIP
             };
 
             int loops = 10, index = 0;
@@ -278,7 +292,7 @@ namespace Tesla
                     ApiResponse<LoginResponse> response = LoginHelper.Login(param);
                     if (response.IsSucceed)
                     {
-                        return GetBalance(task.ClientApi, response.data);
+                        return GetBalance(param.Api, param.IP, response.data);
                     }
                     else
                     {
@@ -306,9 +320,10 @@ namespace Tesla
             {
                 UserName = task.ServerUserName,
                 Password = task.ServerUserPwd,
-                LoginApi = task.ServerApi,
+                Api = task.ServerApi,
                 PlatformId = GetPlatformId(task.ServerCode),
-                ClientType = task.ServerDeviceType
+                ClientType = task.ServerDeviceType,
+                IP = task.ServerIP
             };
 
             int loops = 10, index = 0;
@@ -319,7 +334,7 @@ namespace Tesla
                     ApiResponse<LoginResponse> response = LoginHelper.Login(param);
                     if (response.IsSucceed)
                     {
-                        return GetBalance(task.ServerApi, response.data);
+                        return GetBalance(param.Api, param.IP, response.data);
                     }
                     else
                     {

@@ -68,6 +68,11 @@ namespace Tesla.Model
         public string ServerDeviceType { get; set; }
 
         /// <summary>
+        /// 服务端IP
+        /// </summary>
+        public string ServerIP { get; set; }
+
+        /// <summary>
         /// 服务端号码上限
         /// </summary>
         public int ServerMaxNumCount { get; set; }
@@ -101,6 +106,11 @@ namespace Tesla.Model
         /// 客户端设备类型
         /// </summary>
         public string ClientDeviceType { get; set; }
+
+        /// <summary>
+        /// 客户端IP
+        /// </summary>
+        public string ClientIP { get; set; }
 
         /// <summary>
         /// 上次停止的原因

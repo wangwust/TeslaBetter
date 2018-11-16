@@ -98,7 +98,7 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         {
             LoginParams param = new LoginParams
             {
-                LoginApi = api.Trim(),
+                Api = api.Trim(),
                 PlatformId = TeslaHelper.GetPlatformId(code.Trim()),
                 UserName = userName.Trim(),
                 Password = pwd.Trim(),

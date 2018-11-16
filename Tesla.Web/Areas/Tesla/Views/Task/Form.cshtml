@@ -209,6 +209,12 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th class="formTitle">登录IP</th>
+                                <td class="formValue">
+                                    <input id="ServerIP" name="ServerIP" type="text" class="form-control required" placeholder="请输入登录IP" />
+                                </td>
+                            </tr>
+                            <tr>
                                 <th class="formTitle">设备类型</th>
                                 <td class="formValue">
                                     @Html.DropDownList("ServerDeviceType", deviceList, new { @class = "form-control required", @id = "ServerDeviceType", @name = "ServerDeviceType" })
@@ -252,6 +258,12 @@
                                 <th class="formTitle">用户密码</th>
                                 <td class="formValue">
                                     <input id="ClientUserPwd" name="ClientUserPwd" type="text" class="form-control required" placeholder="请输入用户密码" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="formTitle">登录IP</th>
+                                <td class="formValue">
+                                    <input id="ClientIP" name="ClientIP" type="text" class="form-control required" placeholder="请输入登录IP" />
                                 </td>
                             </tr>
                             <tr>

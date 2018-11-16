@@ -64,9 +64,9 @@ namespace Tesla.App
         public static int SubmitForm(AppTask model)
         {
             string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, SingleMoney=@SingleMoney, ServerCode=@ServerCode, "
-                       + "ServerApi=@ServerApi, ServerUserName=@ServerUserName, ServerUserPwd=@ServerUserPwd, ServerDeviceType=@ServerDeviceType, "
+                       + "ServerApi=@ServerApi, ServerUserName=@ServerUserName, ServerUserPwd=@ServerUserPwd, ServerDeviceType=@ServerDeviceType, ServerIP=@ServerIP, "
                        + "ServerMaxNumCount=@ServerMaxNumCount, ServerMinNumCount=@ServerMinNumCount, ClientCode=@ClientCode, ClientApi=@ClientApi, "
-                       + "ClientUserName=@ClientUserName, ClientUserPwd=@ClientUserPwd, ClientDeviceType=@ClientDeviceType where ID=@ID";
+                       + "ClientUserName=@ClientUserName, ClientUserPwd=@ClientUserPwd, ClientDeviceType=@ClientDeviceType, ClientIP=@ClientIP where ID=@ID";
             return DBHelper.Execute(sql, model);
         }
     }

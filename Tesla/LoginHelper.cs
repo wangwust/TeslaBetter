@@ -20,7 +20,8 @@ namespace Tesla
             {
                 { "Client-Type", param.ClientType },
                 { "staffid", param.PlatformId },
-                { "timestamp", DateTime.Now.ToTimestamp().ToString() }
+                { "timestamp", DateTime.Now.ToTimestamp().ToString() },
+                { "x-forwarded-for", param.IP }
             };
 
             Dictionary<string, string> paramDic = new Dictionary<string, string>
@@ -29,7 +30,7 @@ namespace Tesla
                 { "password", param.Password },
             };
 
-            string result = HttpHelper.HttpPost(param.LoginApi + "/user/login", paramDic, headerDic, null);
+            string result = HttpHelper.HttpPost(param.Api + "/user/login", paramDic, headerDic, null);
             ApiResponse<LoginResponse> reponse = result.ToEntity<ApiResponse<LoginResponse>>();
             return reponse;
         }

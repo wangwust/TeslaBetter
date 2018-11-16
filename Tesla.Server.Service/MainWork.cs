@@ -176,8 +176,9 @@ namespace Tesla.Server.Service
             List<string> fiftyNumList = BetHelper.GetBetInfo(numCount);
 
             BetParams betParam = BetHelper.GetBetParams(loginResponse, fiftyNumList, task.SingleMoney);
-            betParam.BetApi = task.ServerApi;
+            betParam.Api = task.ServerApi;
             betParam.Issue = issueNo;
+            betParam.IP = task.ServerIP;
 
             ApiResponse<BetResponse> response = BetHelper.Bet(betParam);
             if (!response.IsSucceed)
@@ -232,7 +233,7 @@ namespace Tesla.Server.Service
                 }
                 */
 
-                decimal serverBalance = TeslaHelper.GetBalance(task.ServerApi, loginResponse);
+                decimal serverBalance = TeslaHelper.GetBalance(task.ServerApi, task.ServerIP, loginResponse);
                 TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{issueNo}]期[服务端]投注成功。投注总额：{fiftyNumList.Count * task.SingleMoney}。投注信息：{betParam.ToJson()}", SourceEnum.Server, task.ServerUserName);
                 TeslaHelper.SaveBetOrder(task, fiftyNumList, issueNo, serverBalance, SourceEnum.Server);
             }
@@ -271,9 +272,10 @@ namespace Tesla.Server.Service
             {
                 UserName = task.ServerUserName,
                 Password = task.ServerUserPwd,
-                LoginApi = task.ServerApi,
+                Api = task.ServerApi,
                 PlatformId = TeslaHelper.GetPlatformId(task.ServerCode),
-                ClientType = task.ServerDeviceType
+                ClientType = task.ServerDeviceType,
+                IP = task.ServerIP
             };
 
             int loops = 10, index = 0;

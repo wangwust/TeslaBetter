@@ -5,28 +5,8 @@ namespace Tesla.Model
     /// <summary>
     /// 投注参数
     /// </summary>
-    public class BetParams
+    public class BetParams : BaseParams
     {
-        /// <summary>
-        /// 用户名
-        /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// 投注Api
-        /// </summary>
-        public string BetApi { get; set; }
-
-        /// <summary>
-        /// 平台ID
-        /// </summary>
-        public string PlatformId { get; set; }
-
-        /// <summary>
-        /// 登录Token
-        /// </summary>
-        public string Token { get; set; }
-
         /// <summary>
         /// 投注内容
         /// </summary>
@@ -41,5 +21,5 @@ namespace Tesla.Model
         /// 号码列表
         /// </summary>
         public List<string> NumList { get; set; }
-}
+    }
 }
