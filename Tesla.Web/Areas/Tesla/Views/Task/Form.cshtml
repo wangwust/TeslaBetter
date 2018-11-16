@@ -75,12 +75,13 @@
         var userName = $("#ServerUserName").val();
         var pwd = $("#ServerUserPwd").val();
         var device = $("#ServerDeviceType").val();
-        if (code == '' || api == '' || userName == '' || pwd == '') {
+        var ttip = $("#ServerIP").val();
+        if (code == '' || api == '' || userName == '' || pwd == '' || ttip == '') {
             $.alert("参数填写不完整");
             return;
         }
 
-        testLogin(code, api, userName, pwd, device);
+        testLogin(code, api, userName, pwd, device, ttip);
     }
 
     function clientLogin() {
@@ -89,18 +90,19 @@
         var userName = $("#ClientUserName").val();
         var pwd = $("#ClientUserPwd").val();
         var device = $("#ClientDeviceType").val();
-        if (code == '' || api == '' || userName == '' || pwd == '') {
+        var ttip = $("#ClientIP").val();
+        if (code == '' || api == '' || userName == '' || pwd == '' || ttip == '') {
             $.alert("参数填写不完整");
             return;
         }
 
-        testLogin(code, api, userName, pwd, device);
+        testLogin(code, api, userName, pwd, device, ttip);
     }
 
-    function testLogin(code, api, userName, pwd, device) {
+    function testLogin(code, api, userName, pwd, device, ttip) {
         $.submitForm({
             url: "/Tesla/Task/TestLogin",
-            param: { code: code, api: api, userName: userName, pwd: pwd, device: device },
+            param: { code: code, api: api, userName: userName, pwd: pwd, device: device, ttip: ttip },
             loading: "正在测试...",
             close: false,
             dataType: "json",

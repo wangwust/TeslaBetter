@@ -94,7 +94,7 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         [HttpPost]
         [HandlerAjaxOnly]
         [ValidateAntiForgeryToken]
-        public ActionResult TestLogin(string code, string api, string userName, string pwd, string device)
+        public ActionResult TestLogin(string code, string api, string userName, string pwd, string device, string ttip)
         {
             LoginParams param = new LoginParams
             {
@@ -102,7 +102,8 @@ namespace Tesla.Web.Areas.Tesla.Controllers
                 PlatformId = TeslaHelper.GetPlatformId(code.Trim()),
                 UserName = userName.Trim(),
                 Password = pwd.Trim(),
-                ClientType = device.Trim()
+                ClientType = device.Trim(),
+                IP = ttip
             };
 
             ApiResponse<LoginResponse> response = LoginHelper.Login(param);
