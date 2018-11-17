@@ -373,12 +373,14 @@
     <Compile Include="Areas\SystemSecurity\Controllers\LogController.cs" />
     <Compile Include="Areas\SystemSecurity\Controllers\ServerMonitoringController.cs" />
     <Compile Include="Areas\SystemSecurity\SystemSecurityAreaRegistration.cs" />
+    <Compile Include="Areas\Tesla\Controllers\AppUserController.cs" />
     <Compile Include="Areas\Tesla\Controllers\ChargeController.cs" />
     <Compile Include="Areas\Tesla\Controllers\AppLogController.cs" />
     <Compile Include="Areas\Tesla\Controllers\BetOrderController.cs" />
     <Compile Include="Areas\Tesla\Controllers\BetParamController.cs" />
     <Compile Include="Areas\Tesla\Controllers\TaskController.cs" />
     <Compile Include="Areas\Tesla\Controllers\WithdrawController.cs" />
+    <Compile Include="Areas\Tesla\Model\AppUserParam.cs" />
     <Compile Include="Areas\Tesla\Model\AppLogParam.cs" />
     <Compile Include="Areas\Tesla\Model\BetOrderParam.cs" />
     <Compile Include="Areas\Tesla\Model\ChargeParam.cs" />
@@ -482,7 +484,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Areas\Tesla\Views\AppUser\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tesla.App\Tesla.App.csproj">
       <Project>{d99343a5-7d5c-4431-b809-8d45a4c67785}</Project>
