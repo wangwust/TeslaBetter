@@ -148,7 +148,7 @@ namespace Tesla.Server.Service
                         }
                     }
 
-                    int seconds = RandomHelper.GetInstance().Next(40, 90);
+                    int seconds = RandomHelper.GetInstance().Next(15, 40);
                     Thread.Sleep(seconds * 1000);
 
                     bool isBet = this.Bet(task, issueInfo.IssueNo);
