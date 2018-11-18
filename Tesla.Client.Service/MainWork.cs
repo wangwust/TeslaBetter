@@ -205,7 +205,7 @@ namespace Tesla.Client.Service
                 if (response.IsSucceed)
                 {
                     decimal clientBalance = TeslaHelper.GetBalance(task.ClientApi, task.ClientIP, this._loginResponse);
-                    TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{param.Issue}]期[客户端]投注成功。投注总额：{param.NumList.Count * task.SingleMoney}。投注信息：{param.ToJson()}", SourceEnum.Client, task.ClientUserName);
+                    TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{param.Issue}]期[客户端]投注成功。投注总额：{param.NumList.Count * task.SingleMoney}。", SourceEnum.Client, task.ClientUserName);
                     TeslaHelper.SaveBetOrder(task, param.NumList, param.Issue, clientBalance, SourceEnum.Client);
 
                     decimal balance = clientBalance - param.NumList.Count * task.SingleMoney;

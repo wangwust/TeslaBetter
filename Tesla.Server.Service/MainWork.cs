@@ -235,7 +235,7 @@ namespace Tesla.Server.Service
                 */
 
                 decimal serverBalance = TeslaHelper.GetBalance(task.ServerApi, task.ServerIP, this._loginResponse);
-                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{issueNo}]期[服务端]投注成功。投注总额：{fiftyNumList.Count * task.SingleMoney}。投注信息：{betParam.ToJson()}", SourceEnum.Server, task.ServerUserName);
+                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{issueNo}]期[服务端]投注成功。投注总额：{fiftyNumList.Count * task.SingleMoney}。", SourceEnum.Server, task.ServerUserName);
                 TeslaHelper.SaveBetOrder(task, fiftyNumList, issueNo, serverBalance, SourceEnum.Server);
             }
             return true;
