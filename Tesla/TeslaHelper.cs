@@ -36,7 +36,7 @@ namespace Tesla
         /// <returns></returns>
         public static bool SkipIssue()
         {
-            return RandomHelper.GetInstance().Next(1, 5) == 3;
+            return RandomHelper.GetInstance().Next(1, 21) == 3;
         }
 
         /// <summary>

@@ -105,6 +105,10 @@
       <Project>{7487cf8b-3f4f-4672-8f4e-7e2dd317186d}</Project>
       <Name>Tesla.Server.Service</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tesla.Service\Tesla.Service.csproj">
+      <Project>{fe6cff95-81e7-4eca-a99e-88c0bacfb357}</Project>
+      <Name>Tesla.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tesla.Utils\Tesla.Utils.csproj">
       <Project>{98e8a861-65b6-4d7f-9678-bb3f2a67b8fb}</Project>
       <Name>Tesla.Utils</Name>

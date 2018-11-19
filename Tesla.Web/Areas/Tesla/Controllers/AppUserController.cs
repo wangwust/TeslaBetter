@@ -88,7 +88,6 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         /// 获取余额
         /// </summary>
         /// <param name="keyValue"></param>
-        /// <param name="keyValue"></param>
         /// <returns></returns>
         [HttpPost]
         [HandlerAjaxOnly]
@@ -121,6 +120,48 @@ namespace Tesla.Web.Areas.Tesla.Controllers
             if (!response.IsSucceed)
             {
                 return Error($"获取余额失败。{response.msg}");
+            }
+
+            decimal balance = TeslaHelper.GetBalance(model.Api, model.IP, response.data);
+            return Success($"当前用户余额：{balance}");
+        }
+
+        /// <summary>
+        /// 提款
+        /// </summary>
+        /// <param name="keyValue"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [ValidateAntiForgeryToken]
+        public ActionResult Withdraw(int keyValue)
+        {
+            AppUser model = AppUserApp.GetForm(keyValue);
+            if (model == null)
+            {
+                return Error("当前用户不存在");
+            }
+
+            string errorMsg = string.Empty;
+            if (IsTaskRun(model, ref errorMsg))
+            {
+                return Error(errorMsg);
+            }
+
+            LoginParams param = new LoginParams
+            {
+                UserName = model.UserName,
+                Password = model.Password,
+                Api = model.Api,
+                PlatformId = model.PlatformId,
+                ClientType = model.ClientType,
+                IP = model.IP
+            };
+
+            ApiResponse<LoginResponse> response = LoginHelper.Login(param);
+            if (!response.IsSucceed)
+            {
+                return Error($"提款失败。{response.msg}");
             }
 
             decimal balance = TeslaHelper.GetBalance(model.Api, model.IP, response.data);

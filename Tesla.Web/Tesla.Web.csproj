@@ -476,6 +476,8 @@
     <Content Include="Areas\Tesla\Views\Withdraw\Index.cshtml" />
     <Content Include="Areas\Tesla\Views\BetParam\Index.cshtml" />
     <Content Include="Areas\Tesla\Views\BetParam\Details.cshtml" />
+    <Content Include="Areas\Tesla\Views\AppUser\Index.cshtml" />
+    <Content Include="Areas\Tesla\Views\AppUser\Form.cshtml" />
     <None Include="Properties\PublishProfiles\1.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -484,9 +486,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Areas\Tesla\Views\AppUser\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Tesla.App\Tesla.App.csproj">
       <Project>{d99343a5-7d5c-4431-b809-8d45a4c67785}</Project>
