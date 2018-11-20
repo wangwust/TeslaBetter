@@ -81,10 +81,10 @@ namespace Tesla.Service
             {
                 try
                 {
-                    if (DateTime.Now.Hour == 4)
-                    {
-                        bettedIssueList.Clear();
-                    }
+                    //if (DateTime.Now.Hour == 4)
+                    //{
+                    //    bettedIssueList.Clear();
+                    //}
 
                     task = task.Update();
 
@@ -205,13 +205,16 @@ namespace Tesla.Service
             else
             {
                 List<string> fortyNumList = BetHelper.LHCNumberList.Except(fiftyNumList).ToList();
-                decimal fortyMoney = fortyNumList.Count * task.SingleMoney;
+                if (fortyNumList.Count != 0)
+                {
+                    decimal fortyMoney = fortyNumList.Count * task.SingleMoney;
 
-                BetParams betParam2 = BetHelper.GetBetParams(this._loginResponse, fortyNumList, task.SingleMoney);
-                betParam2.Issue = issueNo;
-                betParam2.NumList = fortyNumList;
+                    BetParams betParam2 = BetHelper.GetBetParams(this._loginResponse, fortyNumList, task.SingleMoney);
+                    betParam2.Issue = issueNo;
+                    betParam2.NumList = fortyNumList;
 
-                this.SaveBetParam(task, betParam2);
+                    this.SaveBetParam(task, betParam2);
+                }
 
                 decimal serverBalance = TeslaHelper.GetBalance(task.ServerApi, task.ServerIP, this._loginResponse);
                 TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{issueNo}]期[服务端]投注成功。投注总额：{fiftyNumList.Count * task.SingleMoney}", SourceEnum.Server, task.ServerUserName);

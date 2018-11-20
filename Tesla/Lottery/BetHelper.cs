@@ -51,6 +51,16 @@ namespace Tesla
         /// <returns></returns>
         public static List<string> GetBetInfo(int count)
         {
+            if (count > 49)
+            {
+                count = 49;
+            }
+
+            if (count < 1)
+            {
+                count = 1;
+            }
+
             List<string> list = LHCNumberList.OrderBy(r => RandomHelper.GetRandomSeed()).ToList();
             List<string> list2 = new List<string>();
             for (int i = 0; i < count; i++)

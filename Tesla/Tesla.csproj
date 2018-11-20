@@ -48,15 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BalanceHelper.cs" />
-    <Compile Include="BetHelper.cs" />
-    <Compile Include="LoginHelper.cs" />
-    <Compile Include="MQHelper.cs" />
-    <Compile Include="OpenTimeHelper.cs" />
-    <Compile Include="PayHelper.cs" />
+    <Compile Include="Lottery\BalanceHelper.cs" />
+    <Compile Include="Lottery\BetHelper.cs" />
+    <Compile Include="Lottery\LoginHelper.cs" />
+    <Compile Include="Logic\MQHelper.cs" />
+    <Compile Include="Logic\OpenTimeHelper.cs" />
+    <Compile Include="Lottery\PayHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegisterHelper.cs" />
-    <Compile Include="TeslaHelper.cs" />
+    <Compile Include="Lottery\RegisterHelper.cs" />
+    <Compile Include="Logic\TeslaHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tesla.App\Tesla.App.csproj">
