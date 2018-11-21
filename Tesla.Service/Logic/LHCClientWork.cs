@@ -164,7 +164,7 @@ namespace Tesla.Service
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{param.Issue}]期[客户端]投注成功。投注总额：{param.NumList.Count * task.SingleMoney}。", SourceEnum.Client, task.ClientUserName);
                     TeslaHelper.SaveBetOrder(task, param.NumList, param.Issue, clientBalance, SourceEnum.Client);
 
-                    decimal balance = clientBalance - param.NumList.Count * task.SingleMoney;
+                    decimal balance = clientBalance;
                     if (balance < task.SingleMoney * (49 - task.ServerMinNumCount))
                     {
                         TeslaHelper.StopTask(task.ID, TaskStopReason.ClientMoney);
