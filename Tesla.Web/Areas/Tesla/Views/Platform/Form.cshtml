@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        if (!!keyValue) {
+            $.ajax({
+                url: "/Tesla/Platform/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+
+        $.submitForm({
+            url: "/Tesla/Platform/SubmitForm?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+</script>
+
+<form id="form1">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">平台代码</th>
+                <td class="formValue">
+                    <input id="Code" name="Code" type="text" readonly="readonly" class="form-control required" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">平台ID</th>
+                <td class="formValue">
+                    <input id="PlatformID" name="PlatformID" type="text" readonly="readonly" class="form-control required" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">网址</th>
+                <td class="formValue">
+                    <input id="Url" name="Url" type="text" class="form-control required" placeholder="请输入网址" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">接口地址</th>
+                <td class="formValue">
+                    <input id="Api" name="Api" type="text" class="form-control required" placeholder="请输入接口地址" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+

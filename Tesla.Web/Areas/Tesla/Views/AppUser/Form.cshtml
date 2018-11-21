@@ -1,6 +1,23 @@
 ﻿@{
     ViewBag.Title = "Form";
     Layout = "~/Views/Shared/_Form.cshtml";
+
+    List<SelectListItem> codeList = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "DD", Value = "DD", Selected = true },
+        new SelectListItem { Text = "YLC", Value = "YLC" },
+        new SelectListItem { Text = "V8", Value = "V8" },
+        new SelectListItem { Text = "K8", Value = "K8" },
+        new SelectListItem { Text = "CXC", Value = "CXC" }
+    };
+
+    List<SelectListItem> deviceList = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Web", Value = "Web", Selected = true },
+        new SelectListItem { Text = "H5", Value = "H5" },
+        new SelectListItem { Text = "Android", Value = "Android" },
+        new SelectListItem { Text = "IOS", Value = "IOS" }
+    };
 }
 <script>
     function submitForm() {
@@ -9,7 +26,7 @@
         }
 
         $.submitForm({
-            url: "/Tesla/Charge/SubmitForm" ,
+            url: "/Tesla/AppUser/SubmitForm",
             param: $("#form1").formSerialize(),
             success: function () {
                 $.currentWindow().$("#gridList").trigger("reloadGrid");
@@ -19,47 +36,63 @@
 </script>
 
 <form id="form1">
-    <div class="widget-body">
-        <div id="wizard" class="wizard" data-target="#wizard-steps" style="border-left: none; border-top: none; border-right: none;">
-            <ul class="steps">
-                <li data-target="#step-1" class="active"><span class="step">1</span>基本信息<span class="chevron"></span></li>
-            </ul>
-        </div>
-        <div class="step-content" id="wizard-steps" style="border-left: none; border-bottom: none; border-right: none;">
-            <div class="step-pane active" id="step-1" style="margin: 10px; margin-bottom: 0px;">
-                <div class="alert alert-danger" style="text-align: left; margin-bottom: 10px;">
-                    <i class="fa fa-warning alert-dismissible" style="position: relative; top: 1px; font-size: 15px; padding-right: 5px;"></i>
-                    请填写基本信息！
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">基本信息</h3>
-                    </div>
-                    <div class="panel-body" style="width: 98%;">
-                        <table class="form">
-                            <tr>
-                                <th class="formTitle">充值人</th>
-                                <td class="formValue">
-                                    <input id="Name" name="Name" type="text" class="form-control required" placeholder="请输入名称" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">充值方式</th>
-                                <td class="formValue">
-                                    <input id="Way" name="Way" type="text" class="form-control required" placeholder="请输入方式" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">充值金额</th>
-                                <td class="formValue">
-                                    <input id="Money" name="Money" type="text" class="form-control required" placeholder="请输入金额" />
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">平台</th>
+                <td class="formValue">
+                    @Html.DropDownList("PlatformName", codeList, new { @class = "form-control required", @id = "PlatformName", @name = "PlatformName" })
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">账号</th>
+                <td class="formValue">
+                    <input id="UserName" name="UserName" type="text" class="form-control required" placeholder="请输入账号" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">密码</th>
+                <td class="formValue">
+                    <input id="Password" name="Password" type="text" class="form-control required" placeholder="请输入密码" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">姓名</th>
+                <td class="formValue">
+                    <input id="RealName" name="RealName" type="text" class="form-control required" placeholder="请输入姓名" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">电话</th>
+                <td class="formValue" style="padding-top: 1px;">
+                    <input id="CellPhone" name="CellPhone" type="text" class="form-control required" placeholder="请输入电话" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">取款密码</th>
+                <td class="formValue">
+                    <input id="WithdrawPwd" name="WithdrawPwd" type="text" class="form-control required" placeholder="请输入取款密码" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">登录IP</th>
+                <td class="formValue">
+                    <input id="IP" name="IP" type="text" class="form-control required" placeholder="请输入登录IP" />
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">设备类型</th>
+                <td class="formValue">
+                    @Html.DropDownList("ClientType", deviceList, new { @class = "form-control required", @id = "ClientType", @name = "ClientType" })
+                </td>
+            </tr>
+            <tr>
+                <th class="formTitle">接口地址</th>
+                <td class="formValue">
+                    <input id="Api" name="Api" type="text" class="form-control required" placeholder="请输入接口地址" />
+                </td>
+            </tr>
+        </table>
     </div>
 </form>
 

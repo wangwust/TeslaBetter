@@ -60,6 +60,8 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SubmitForm(AppUser model)
         {
+            model.PlatformId = TeslaHelper.GetPlatformId(model.PlatformName);
+
             RegisterParams param = new RegisterParams
             {
                 UserName = model.UserName,
@@ -100,11 +102,11 @@ namespace Tesla.Web.Areas.Tesla.Controllers
                 return Error("当前用户不存在");
             }
 
-            string errorMsg = string.Empty;
-            if (IsTaskRun(model, ref errorMsg))
-            {
-                return Error(errorMsg);
-            }
+            //string errorMsg = string.Empty;
+            //if (IsTaskRun(model, ref errorMsg))
+            //{
+            //    return Error(errorMsg);
+            //}
 
             LoginParams param = new LoginParams
             {
@@ -122,8 +124,7 @@ namespace Tesla.Web.Areas.Tesla.Controllers
                 return Error($"获取余额失败。{response.msg}");
             }
 
-            decimal balance = TeslaHelper.GetBalance(model.Api, model.IP, response.data);
-            return Success($"当前用户余额：{balance}");
+            return Success($"当前用户余额：{response.data.accountBalance}");
         }
 
         /// <summary>

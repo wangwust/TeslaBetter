@@ -5,7 +5,7 @@
 <script>
     $(function () {
         gridList();
-    })
+    });
     function gridList() {
         var $gridList = $("#gridList");
         $gridList.dataGrid({
@@ -13,14 +13,14 @@
             height: $(window).height() - 128,
             colModel: [
                 { label: "主键", name: "ID", hidden: true, key: true },
-                { label: '时间', name: 'CreateTime', width: 120, align: 'left' },
+                { label: '注册时间', name: 'CreateTime', width: 120, align: 'left' },
                 { label: '用户名', name: 'UserName', width: 60, align: 'left' },
-                { label: '密码', name: 'Password', width: 120, align: 'left', sortable: false },
-                { label: '支付密码', name: 'WithdrawPwd', width: 120, align: 'left', sortable: false },
+                { label: '密码', name: 'Password', width: 80, align: 'left', sortable: false },
+                { label: '支付密码', name: 'WithdrawPwd', width: 80, align: 'left', sortable: false },
                 { label: '真实姓名', name: 'RealName', width: 100, align: 'left', sortable: false },
                 { label: '电话', name: 'CellPhone', width: 100, align: 'left', sortable: false },
-                { label: '平台ID', name: 'PlatformId', width: 100, align: 'left', sortable: false },
-                { label: '平台名称', name: 'PlatformName', width: 100, align: 'left', sortable: false },
+                { label: '平台ID', name: 'PlatformId', width: 300, align: 'left', sortable: false },
+                { label: '平台名称', name: 'PlatformName', width: 60, align: 'left', sortable: false },
                 { label: '注册IP', name: 'IP', width: 100, align: 'left', sortable: false },
                 { label: '客户端类型', name: 'ClientType', width: 100, align: 'left', sortable: false },
                 { label: '接口地址', name: 'Api', width: 100, align: 'left', sortable: false },
@@ -29,10 +29,12 @@
             sortname: 'ID desc',
             viewrecords: true
         });
+
         $("#btn_search").click(function () {
             var queryJson = {
                 Name: $("#txt_keyword").val()
-            }
+            };
+
             $gridList.jqGrid('setGridParam', {
                 postData: { queryJson: JSON.stringify(queryJson) }
             }).trigger('reloadGrid');
@@ -45,7 +47,7 @@
             title: "注册",
             url: "/Tesla/AppUser/Form",
             width: "650px",
-            height: "440px",
+            height: "500px",
             callBack: function (iframeId) {
                 top.frames[iframeId].submitForm();
             }

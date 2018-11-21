@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 本地【Mysql】
-Source Server Version : 80012
-Source Host           : localhost:3306
+Source Server         : 阿里云【Mysql】
+Source Server Version : 50724
+Source Host           : 47.98.115.91:3306
 Source Database       : tesla
 
 Target Server Type    : MYSQL
-Target Server Version : 80012
+Target Server Version : 50724
 File Encoding         : 65001
 
-Date: 2018-11-13 12:47:57
+Date: 2018-11-21 12:19:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,6 +23,7 @@ CREATE TABLE `app_betorder` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `CreateTime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `CreateTimestamp` bigint(20) DEFAULT NULL,
+  `UserName` varchar(50) DEFAULT NULL COMMENT '用户名',
   `TaskId` int(11) DEFAULT NULL,
   `TaskName` varchar(50) DEFAULT NULL,
   `LotteryName` varchar(32) DEFAULT NULL COMMENT '彩种名称',
@@ -30,19 +31,11 @@ CREATE TABLE `app_betorder` (
   `Number` varchar(255) DEFAULT NULL COMMENT '投注号码',
   `SingleMoney` decimal(11,2) DEFAULT '0.00' COMMENT '单注金额',
   `TotalMoney` decimal(11,2) DEFAULT '0.00' COMMENT '投注总额',
+  `BeforeBalance` decimal(11,2) DEFAULT '0.00',
+  `AfterBalance` decimal(11,2) DEFAULT '0.00',
   `Source` tinyint(4) DEFAULT NULL COMMENT '来源。1：服务端，2：客户端',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of app_betorder
--- ----------------------------
-INSERT INTO `app_betorder` VALUES ('1', '2018-11-12 15:08:50', '1542006530228', '1', '测试', '急速六合彩', '20181112087', '2,3,6,8,9,10,12,13,14,18,19,20,23,24,26,27,28,32,36,37,38,40,41,44,45,46,47', '2.00', '54.00', '1');
-INSERT INTO `app_betorder` VALUES ('2', '2018-11-12 16:02:40', '1542009760323', '1', '测试', '急速六合彩', '20181112098', '1,6,7,9,10,11,13,14,16,17,18,19,20,22,31,33,35,36,37,39,40,46,47,48,49', '2.00', '50.00', '1');
-INSERT INTO `app_betorder` VALUES ('3', '2018-11-12 16:30:37', '1542011436987', '1', '测试', '急速六合彩', '20181112104', '1,3,4,5,7,8,9,10,11,12,13,15,17,18,19,20,21,25,26,28,32,35,37,38,39,41,42,43,44,47', '2.00', '60.00', '1');
-INSERT INTO `app_betorder` VALUES ('4', '2018-11-12 16:30:38', '1542011437618', '1', '测试', '急速六合彩', '20181112104', '2,6,14,16,22,23,24,27,29,30,31,33,34,36,40,45,46,48,49', '2.00', '38.00', '0');
-INSERT INTO `app_betorder` VALUES ('5', '2018-11-12 16:35:19', '1542011719358', '1', '测试', '急速六合彩', '20181112105', '1,3,5,7,9,10,11,12,13,15,17,19,23,24,25,27,29,32,35,36,37,38,40,41,42,46,48', '2.00', '54.00', '1');
-INSERT INTO `app_betorder` VALUES ('6', '2018-11-12 16:35:19', '1542011719482', '1', '测试', '急速六合彩', '20181112105', '2,4,6,8,14,16,18,20,21,22,26,28,30,31,33,34,39,43,44,45,47,49', '2.00', '44.00', '0');
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for app_betparam
@@ -53,13 +46,28 @@ CREATE TABLE `app_betparam` (
   `CreateTime` datetime DEFAULT NULL,
   `TaskId` int(11) DEFAULT NULL,
   `TaskName` varchar(50) DEFAULT NULL,
-  `Params` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '投注参数',
+  `Params` text COMMENT '投注参数',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of app_betparam
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for app_charge
+-- ----------------------------
+DROP TABLE IF EXISTS `app_charge`;
+CREATE TABLE `app_charge` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CreateTime` datetime DEFAULT NULL,
+  `UpdateTime` datetime DEFAULT NULL,
+  `Name` varchar(50) DEFAULT NULL,
+  `Way` varchar(50) DEFAULT NULL,
+  `Money` decimal(11,2) DEFAULT '0.00',
+  `IsDeleted` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for app_log
@@ -69,6 +77,7 @@ CREATE TABLE `app_log` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `CreateTime` datetime DEFAULT NULL,
   `CreateTimestamp` bigint(20) DEFAULT NULL,
+  `UserName` varchar(50) DEFAULT NULL COMMENT '用户',
   `TaskId` int(11) DEFAULT NULL COMMENT '任务ID',
   `TaskName` varchar(50) DEFAULT NULL COMMENT '任务名称',
   `Source` tinyint(4) DEFAULT '0' COMMENT '日志来源。0：未知，1：服务端；2：客户端',
@@ -76,19 +85,7 @@ CREATE TABLE `app_log` (
   `TypeText` varchar(16) DEFAULT NULL,
   `Message` varchar(4000) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of app_log
--- ----------------------------
-INSERT INTO `app_log` VALUES ('1', '2018-11-12 14:45:49', '1542005149449', '1', '测试', '1', 'INFO', '信息', '第[20181112083]期[服务端]投注成功。投注总额：52。投注信息：{\"UserName\":\"octest001\",\"BetApi\":\"http://148.66.31.130:8012/order/bet/85\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"d0ce5bd90e1e45bf8915451b1bba6806\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":37,\\\"playId\\\":858586},{\\\"money\\\":2.0,\\\"Number\\\":14,\\\"playId\\\":858563},{\\\"money\\\":2.0,\\\"Number\\\":45,\\\"playId\\\":858594},{\\\"money\\\":2.0,\\\"Number\\\":39,\\\"playId\\\":858588},{\\\"money\\\":2.0,\\\"Number\\\":35,\\\"playId\\\":858584},{\\\"money\\\":2.0,\\\"Number\\\":22,\\\"playId\\\":858571},{\\\"money\\\":2.0,\\\"Number\\\":27,\\\"playId\\\":858576},{\\\"money\\\":2.0,\\\"Number\\\":12,\\\"playId\\\":858561},{\\\"money\\\":2.0,\\\"Number\\\":18,\\\"playId\\\":858567},{\\\"money\\\":2.0,\\\"Number\\\":44,\\\"playId\\\":858593},{\\\"money\\\":2.0,\\\"Number\\\":26,\\\"playId\\\":858575},{\\\"money\\\":2.0,\\\"Number\\\":40,\\\"playId\\\":858589},{\\\"money\\\":2.0,\\\"Number\\\":5,\\\"playId\\\":858554},{\\\"money\\\":2.0,\\\"Number\\\":11,\\\"playId\\\":858560},{\\\"money\\\":2.0,\\\"Number\\\":46,\\\"playId\\\":858595},{\\\"money\\\":2.0,\\\"Number\\\":10,\\\"playId\\\":858559},{\\\"money\\\":2.0,\\\"Number\\\":9,\\\"playId\\\":858558},{\\\"money\\\":2.0,\\\"Number\\\":20,\\\"playId\\\":858569},{\\\"money\\\":2.0,\\\"Number\\\":36,\\\"playId\\\":858585},{\\\"money\\\":2.0,\\\"Number\\\":2,\\\"playId\\\":858551},{\\\"money\\\":2.0,\\\"Number\\\":13,\\\"playId\\\":858562},{\\\"money\\\":2.0,\\\"Number\\\":42,\\\"playId\\\":858591},{\\\"money\\\":2.0,\\\"Number\\\":24,\\\"playId\\\":858573},{\\\"money\\\":2.0,\\\"Number\\\":17,\\\"playId\\\":858566},{\\\"money\\\":2.0,\\\"Number\\\":34,\\\"playId\\\":858583},{\\\"money\\\":2.0,\\\"Number\\\":43,\\\"playId\\\":858592}]\",\"Issue\":\"20181112083\"}');
-INSERT INTO `app_log` VALUES ('2', '2018-11-12 15:07:46', '1542006465906', '1', '测试', '1', 'INFO', '信息', '第[20181112087]期[服务端]投注成功。投注总额：54。投注信息：{\"UserName\":\"octest001\",\"BetApi\":\"http://148.66.31.130:8012/order/bet/85\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"3b585d2e8ab049d28aabd951a2645266\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":44,\\\"playId\\\":858593},{\\\"money\\\":2.0,\\\"Number\\\":19,\\\"playId\\\":858568},{\\\"money\\\":2.0,\\\"Number\\\":41,\\\"playId\\\":858590},{\\\"money\\\":2.0,\\\"Number\\\":23,\\\"playId\\\":858572},{\\\"money\\\":2.0,\\\"Number\\\":46,\\\"playId\\\":858595},{\\\"money\\\":2.0,\\\"Number\\\":37,\\\"playId\\\":858586},{\\\"money\\\":2.0,\\\"Number\\\":20,\\\"playId\\\":858569},{\\\"money\\\":2.0,\\\"Number\\\":3,\\\"playId\\\":858552},{\\\"money\\\":2.0,\\\"Number\\\":13,\\\"playId\\\":858562},{\\\"money\\\":2.0,\\\"Number\\\":6,\\\"playId\\\":858555},{\\\"money\\\":2.0,\\\"Number\\\":12,\\\"playId\\\":858561},{\\\"money\\\":2.0,\\\"Number\\\":24,\\\"playId\\\":858573},{\\\"money\\\":2.0,\\\"Number\\\":2,\\\"playId\\\":858551},{\\\"money\\\":2.0,\\\"Number\\\":8,\\\"playId\\\":858557},{\\\"money\\\":2.0,\\\"Number\\\":10,\\\"playId\\\":858559},{\\\"money\\\":2.0,\\\"Number\\\":38,\\\"playId\\\":858587},{\\\"money\\\":2.0,\\\"Number\\\":14,\\\"playId\\\":858563},{\\\"money\\\":2.0,\\\"Number\\\":32,\\\"playId\\\":858581},{\\\"money\\\":2.0,\\\"Number\\\":40,\\\"playId\\\":858589},{\\\"money\\\":2.0,\\\"Number\\\":47,\\\"playId\\\":858596},{\\\"money\\\":2.0,\\\"Number\\\":45,\\\"playId\\\":858594},{\\\"money\\\":2.0,\\\"Number\\\":27,\\\"playId\\\":858576},{\\\"money\\\":2.0,\\\"Number\\\":9,\\\"playId\\\":858558},{\\\"money\\\":2.0,\\\"Number\\\":26,\\\"playId\\\":858575},{\\\"money\\\":2.0,\\\"Number\\\":18,\\\"playId\\\":858567},{\\\"money\\\":2.0,\\\"Number\\\":36,\\\"playId\\\":858585},{\\\"money\\\":2.0,\\\"Number\\\":28,\\\"playId\\\":858577}]\",\"Issue\":\"20181112087\"}');
-INSERT INTO `app_log` VALUES ('3', '2018-11-12 16:02:40', '1542009759787', '1', '测试', '1', 'INFO', '信息', '第[20181112098]期[服务端]投注成功。投注总额：50。投注信息：{\"UserName\":\"octest001\",\"BetApi\":\"http://148.66.31.130:8012\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"585497e1f51b4ef5bd3b344b0ae33a35\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":17,\\\"playId\\\":858566},{\\\"money\\\":2.0,\\\"Number\\\":13,\\\"playId\\\":858562},{\\\"money\\\":2.0,\\\"Number\\\":37,\\\"playId\\\":858586},{\\\"money\\\":2.0,\\\"Number\\\":47,\\\"playId\\\":858596},{\\\"money\\\":2.0,\\\"Number\\\":35,\\\"playId\\\":858584},{\\\"money\\\":2.0,\\\"Number\\\":31,\\\"playId\\\":858580},{\\\"money\\\":2.0,\\\"Number\\\":1,\\\"playId\\\":858550},{\\\"money\\\":2.0,\\\"Number\\\":36,\\\"playId\\\":858585},{\\\"money\\\":2.0,\\\"Number\\\":19,\\\"playId\\\":858568},{\\\"money\\\":2.0,\\\"Number\\\":22,\\\"playId\\\":858571},{\\\"money\\\":2.0,\\\"Number\\\":9,\\\"playId\\\":858558},{\\\"money\\\":2.0,\\\"Number\\\":11,\\\"playId\\\":858560},{\\\"money\\\":2.0,\\\"Number\\\":18,\\\"playId\\\":858567},{\\\"money\\\":2.0,\\\"Number\\\":20,\\\"playId\\\":858569},{\\\"money\\\":2.0,\\\"Number\\\":46,\\\"playId\\\":858595},{\\\"money\\\":2.0,\\\"Number\\\":40,\\\"playId\\\":858589},{\\\"money\\\":2.0,\\\"Number\\\":49,\\\"playId\\\":858598},{\\\"money\\\":2.0,\\\"Number\\\":7,\\\"playId\\\":858556},{\\\"money\\\":2.0,\\\"Number\\\":14,\\\"playId\\\":858563},{\\\"money\\\":2.0,\\\"Number\\\":6,\\\"playId\\\":858555},{\\\"money\\\":2.0,\\\"Number\\\":48,\\\"playId\\\":858597},{\\\"money\\\":2.0,\\\"Number\\\":39,\\\"playId\\\":858588},{\\\"money\\\":2.0,\\\"Number\\\":16,\\\"playId\\\":858565},{\\\"money\\\":2.0,\\\"Number\\\":33,\\\"playId\\\":858582},{\\\"money\\\":2.0,\\\"Number\\\":10,\\\"playId\\\":858559}]\",\"Issue\":\"20181112098\",\"NumList\":null}');
-INSERT INTO `app_log` VALUES ('4', '2018-11-12 16:29:50', '1542011389852', '1', '测试', '1', 'INFO', '信息', '第[20181112103]期[服务端]距离封盘仅剩[10.1545655]秒，跳过投注');
-INSERT INTO `app_log` VALUES ('5', '2018-11-12 16:30:37', '1542011436887', '1', '测试', '1', 'INFO', '信息', '第[20181112104]期[服务端]投注成功。投注总额：60。投注信息：{\"UserName\":\"octest001\",\"BetApi\":\"http://148.66.31.130:8012\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"94982f8dd22c4c4f86824de978264eae\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":1,\\\"playId\\\":858550},{\\\"money\\\":2.0,\\\"Number\\\":37,\\\"playId\\\":858586},{\\\"money\\\":2.0,\\\"Number\\\":35,\\\"playId\\\":858584},{\\\"money\\\":2.0,\\\"Number\\\":21,\\\"playId\\\":858570},{\\\"money\\\":2.0,\\\"Number\\\":15,\\\"playId\\\":858564},{\\\"money\\\":2.0,\\\"Number\\\":41,\\\"playId\\\":858590},{\\\"money\\\":2.0,\\\"Number\\\":43,\\\"playId\\\":858592},{\\\"money\\\":2.0,\\\"Number\\\":20,\\\"playId\\\":858569},{\\\"money\\\":2.0,\\\"Number\\\":3,\\\"playId\\\":858552},{\\\"money\\\":2.0,\\\"Number\\\":13,\\\"playId\\\":858562},{\\\"money\\\":2.0,\\\"Number\\\":32,\\\"playId\\\":858581},{\\\"money\\\":2.0,\\\"Number\\\":47,\\\"playId\\\":858596},{\\\"money\\\":2.0,\\\"Number\\\":39,\\\"playId\\\":858588},{\\\"money\\\":2.0,\\\"Number\\\":38,\\\"playId\\\":858587},{\\\"money\\\":2.0,\\\"Number\\\":5,\\\"playId\\\":858554},{\\\"money\\\":2.0,\\\"Number\\\":8,\\\"playId\\\":858557},{\\\"money\\\":2.0,\\\"Number\\\":7,\\\"playId\\\":858556},{\\\"money\\\":2.0,\\\"Number\\\":19,\\\"playId\\\":858568},{\\\"money\\\":2.0,\\\"Number\\\":4,\\\"playId\\\":858553},{\\\"money\\\":2.0,\\\"Number\\\":9,\\\"playId\\\":858558},{\\\"money\\\":2.0,\\\"Number\\\":10,\\\"playId\\\":858559},{\\\"money\\\":2.0,\\\"Number\\\":12,\\\"playId\\\":858561},{\\\"money\\\":2.0,\\\"Number\\\":26,\\\"playId\\\":858575},{\\\"money\\\":2.0,\\\"Number\\\":11,\\\"playId\\\":858560},{\\\"money\\\":2.0,\\\"Number\\\":42,\\\"playId\\\":858591},{\\\"money\\\":2.0,\\\"Number\\\":25,\\\"playId\\\":858574},{\\\"money\\\":2.0,\\\"Number\\\":17,\\\"playId\\\":858566},{\\\"money\\\":2.0,\\\"Number\\\":18,\\\"playId\\\":858567},{\\\"money\\\":2.0,\\\"Number\\\":44,\\\"playId\\\":858593},{\\\"money\\\":2.0,\\\"Number\\\":28,\\\"playId\\\":858577}]\",\"Issue\":\"20181112104\",\"NumList\":null}');
-INSERT INTO `app_log` VALUES ('6', '2018-11-12 16:30:38', '1542011437580', '1', '测试', '0', 'INFO', '信息', '第[20181112104]期[客户端]投注成功。投注总额：38。投注信息：{\"UserName\":\"octest002\",\"BetApi\":\"http://148.66.31.130:8012\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"539aba820dd547a08ba70d7a1cd1b95d\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":2,\\\"playId\\\":858551},{\\\"money\\\":2.0,\\\"Number\\\":6,\\\"playId\\\":858555},{\\\"money\\\":2.0,\\\"Number\\\":14,\\\"playId\\\":858563},{\\\"money\\\":2.0,\\\"Number\\\":16,\\\"playId\\\":858565},{\\\"money\\\":2.0,\\\"Number\\\":22,\\\"playId\\\":858571},{\\\"money\\\":2.0,\\\"Number\\\":23,\\\"playId\\\":858572},{\\\"money\\\":2.0,\\\"Number\\\":24,\\\"playId\\\":858573},{\\\"money\\\":2.0,\\\"Number\\\":27,\\\"playId\\\":858576},{\\\"money\\\":2.0,\\\"Number\\\":29,\\\"playId\\\":858578},{\\\"money\\\":2.0,\\\"Number\\\":30,\\\"playId\\\":858579},{\\\"money\\\":2.0,\\\"Number\\\":31,\\\"playId\\\":858580},{\\\"money\\\":2.0,\\\"Number\\\":33,\\\"playId\\\":858582},{\\\"money\\\":2.0,\\\"Number\\\":34,\\\"playId\\\":858583},{\\\"money\\\":2.0,\\\"Number\\\":36,\\\"playId\\\":858585},{\\\"money\\\":2.0,\\\"Number\\\":40,\\\"playId\\\":858589},{\\\"money\\\":2.0,\\\"Number\\\":45,\\\"playId\\\":858594},{\\\"money\\\":2.0,\\\"Number\\\":46,\\\"playId\\\":858595},{\\\"money\\\":2.0,\\\"Number\\\":48,\\\"playId\\\":858597},{\\\"money\\\":2.0,\\\"Number\\\":49,\\\"playId\\\":858598}]\",\"Issue\":\"20181112104\",\"NumList\":[\"02\",\"06\",\"14\",\"16\",\"22\",\"23\",\"24\",\"27\",\"29\",\"30\",\"31\",\"33\",\"34\",\"36\",\"40\",\"45\",\"46\",\"48\",\"49\"]}');
-INSERT INTO `app_log` VALUES ('7', '2018-11-12 16:35:19', '1542011719276', '1', '测试', '1', 'INFO', '信息', '第[20181112105]期[服务端]投注成功。投注总额：54。投注信息：{\"UserName\":\"octest001\",\"BetApi\":\"http://148.66.31.130:8012\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"94982f8dd22c4c4f86824de978264eae\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":23,\\\"playId\\\":858572},{\\\"money\\\":2.0,\\\"Number\\\":36,\\\"playId\\\":858585},{\\\"money\\\":2.0,\\\"Number\\\":9,\\\"playId\\\":858558},{\\\"money\\\":2.0,\\\"Number\\\":24,\\\"playId\\\":858573},{\\\"money\\\":2.0,\\\"Number\\\":12,\\\"playId\\\":858561},{\\\"money\\\":2.0,\\\"Number\\\":7,\\\"playId\\\":858556},{\\\"money\\\":2.0,\\\"Number\\\":13,\\\"playId\\\":858562},{\\\"money\\\":2.0,\\\"Number\\\":17,\\\"playId\\\":858566},{\\\"money\\\":2.0,\\\"Number\\\":1,\\\"playId\\\":858550},{\\\"money\\\":2.0,\\\"Number\\\":38,\\\"playId\\\":858587},{\\\"money\\\":2.0,\\\"Number\\\":41,\\\"playId\\\":858590},{\\\"money\\\":2.0,\\\"Number\\\":11,\\\"playId\\\":858560},{\\\"money\\\":2.0,\\\"Number\\\":25,\\\"playId\\\":858574},{\\\"money\\\":2.0,\\\"Number\\\":32,\\\"playId\\\":858581},{\\\"money\\\":2.0,\\\"Number\\\":40,\\\"playId\\\":858589},{\\\"money\\\":2.0,\\\"Number\\\":37,\\\"playId\\\":858586},{\\\"money\\\":2.0,\\\"Number\\\":19,\\\"playId\\\":858568},{\\\"money\\\":2.0,\\\"Number\\\":42,\\\"playId\\\":858591},{\\\"money\\\":2.0,\\\"Number\\\":5,\\\"playId\\\":858554},{\\\"money\\\":2.0,\\\"Number\\\":29,\\\"playId\\\":858578},{\\\"money\\\":2.0,\\\"Number\\\":27,\\\"playId\\\":858576},{\\\"money\\\":2.0,\\\"Number\\\":48,\\\"playId\\\":858597},{\\\"money\\\":2.0,\\\"Number\\\":10,\\\"playId\\\":858559},{\\\"money\\\":2.0,\\\"Number\\\":15,\\\"playId\\\":858564},{\\\"money\\\":2.0,\\\"Number\\\":46,\\\"playId\\\":858595},{\\\"money\\\":2.0,\\\"Number\\\":3,\\\"playId\\\":858552},{\\\"money\\\":2.0,\\\"Number\\\":35,\\\"playId\\\":858584}]\",\"Issue\":\"20181112105\",\"NumList\":null}');
-INSERT INTO `app_log` VALUES ('8', '2018-11-12 16:35:19', '1542011719477', '1', '测试', '0', 'INFO', '信息', '第[20181112105]期[客户端]投注成功。投注总额：44。投注信息：{\"UserName\":\"octest002\",\"BetApi\":\"http://148.66.31.130:8012\",\"PlatformId\":\"08F22DF8F31643C78ADB8DC135E6DC92\",\"Token\":\"539aba820dd547a08ba70d7a1cd1b95d\",\"BetInfo\":\"[{\\\"money\\\":2.0,\\\"Number\\\":2,\\\"playId\\\":858551},{\\\"money\\\":2.0,\\\"Number\\\":4,\\\"playId\\\":858553},{\\\"money\\\":2.0,\\\"Number\\\":6,\\\"playId\\\":858555},{\\\"money\\\":2.0,\\\"Number\\\":8,\\\"playId\\\":858557},{\\\"money\\\":2.0,\\\"Number\\\":14,\\\"playId\\\":858563},{\\\"money\\\":2.0,\\\"Number\\\":16,\\\"playId\\\":858565},{\\\"money\\\":2.0,\\\"Number\\\":18,\\\"playId\\\":858567},{\\\"money\\\":2.0,\\\"Number\\\":20,\\\"playId\\\":858569},{\\\"money\\\":2.0,\\\"Number\\\":21,\\\"playId\\\":858570},{\\\"money\\\":2.0,\\\"Number\\\":22,\\\"playId\\\":858571},{\\\"money\\\":2.0,\\\"Number\\\":26,\\\"playId\\\":858575},{\\\"money\\\":2.0,\\\"Number\\\":28,\\\"playId\\\":858577},{\\\"money\\\":2.0,\\\"Number\\\":30,\\\"playId\\\":858579},{\\\"money\\\":2.0,\\\"Number\\\":31,\\\"playId\\\":858580},{\\\"money\\\":2.0,\\\"Number\\\":33,\\\"playId\\\":858582},{\\\"money\\\":2.0,\\\"Number\\\":34,\\\"playId\\\":858583},{\\\"money\\\":2.0,\\\"Number\\\":39,\\\"playId\\\":858588},{\\\"money\\\":2.0,\\\"Number\\\":43,\\\"playId\\\":858592},{\\\"money\\\":2.0,\\\"Number\\\":44,\\\"playId\\\":858593},{\\\"money\\\":2.0,\\\"Number\\\":45,\\\"playId\\\":858594},{\\\"money\\\":2.0,\\\"Number\\\":47,\\\"playId\\\":858596},{\\\"money\\\":2.0,\\\"Number\\\":49,\\\"playId\\\":858598}]\",\"Issue\":\"20181112105\",\"NumList\":[\"02\",\"04\",\"06\",\"08\",\"14\",\"16\",\"18\",\"20\",\"21\",\"22\",\"26\",\"28\",\"30\",\"31\",\"33\",\"34\",\"39\",\"43\",\"44\",\"45\",\"47\",\"49\"]}');
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for app_task
@@ -98,7 +95,7 @@ CREATE TABLE `app_task` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `CreateTime` datetime DEFAULT NULL,
   `UpdateTime` datetime DEFAULT NULL,
-  `Name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '任务名称',
+  `Name` varchar(50) DEFAULT NULL COMMENT '任务名称',
   `StartHour` int(11) DEFAULT '8' COMMENT '每天开始执行的准点数',
   `EndHour` int(11) DEFAULT '23' COMMENT '每天结束执行的准点数',
   `SingleMoney` decimal(10,0) DEFAULT '2' COMMENT '单注金额',
@@ -107,6 +104,7 @@ CREATE TABLE `app_task` (
   `ServerUserName` varchar(255) DEFAULT NULL COMMENT '服务端用户名',
   `ServerUserPwd` varchar(255) DEFAULT NULL COMMENT '服务端用户密码',
   `ServerDeviceType` varchar(50) DEFAULT 'IOS' COMMENT '服务端设备类型',
+  `ServerIP` varchar(50) DEFAULT NULL COMMENT '服务端IP',
   `ServerMaxNumCount` int(11) DEFAULT '0' COMMENT '服务端投注的号码个数上限。取值范围1-49',
   `ServerMinNumCount` int(11) DEFAULT '0' COMMENT '服务端号码个数下限。取值范围1-49',
   `ClientCode` varchar(50) DEFAULT NULL COMMENT '客户端平台代码',
@@ -114,7 +112,8 @@ CREATE TABLE `app_task` (
   `ClientUserName` varchar(255) DEFAULT NULL COMMENT '客户端用户名',
   `ClientUserPwd` varchar(255) DEFAULT NULL COMMENT '客户端用户密码',
   `ClientDeviceType` varchar(50) DEFAULT 'Android' COMMENT '客户端设备名称',
-  `LastStopReason` tinyint(4) DEFAULT '0' COMMENT '上次任务停止的原因。0：未启动；1：服务端掉线；2：服务端余额不足；3：服务端投注异常；4：客户端掉线；5：客户端余额不足；6：客户端投注异常；7：手动停止',
+  `ClientIP` varchar(50) DEFAULT NULL COMMENT '客户端IP',
+  `LastStopReason` tinyint(4) DEFAULT NULL COMMENT '上次任务停止的原因。0：未启动；1：服务端掉线；2：服务端余额不足；3：服务端投注异常；4：客户端掉线；5：客户端余额不足；6：客户端投注异常；7：手动停止',
   `State` tinyint(4) DEFAULT '0' COMMENT '任务状态。0：停止；1：开启',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -122,7 +121,26 @@ CREATE TABLE `app_task` (
 -- ----------------------------
 -- Records of app_task
 -- ----------------------------
-INSERT INTO `app_task` VALUES ('1', '2018-11-12 12:14:04', '2018-11-12 17:43:01', '测试', '8', '23', '2', 'DD', 'http://148.66.31.130:8012', 'octest001', 'qq123456', 'IOS', '29', '25', 'DD', 'http://148.66.31.130:8012', 'octest002', 'qq123456', 'Android', '0', '0');
+INSERT INTO `app_task` VALUES ('1', '2018-11-12 12:14:04', '2018-11-21 00:01:11', '任务1', '0', '24', '10', 'YLC', 'https://api.ylcjiekou.com', 'litaibai999', 'litaibai999.', 'IOS', '110.87.24.111', '49', '49', 'V8', 'https://api.v8jiekou.com', 'chenhuo88', 'chenhuo88.', 'Android', '116.255.250.156', '5', '1');
+
+-- ----------------------------
+-- Table structure for app_withdraw
+-- ----------------------------
+DROP TABLE IF EXISTS `app_withdraw`;
+CREATE TABLE `app_withdraw` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CreateTime` datetime DEFAULT NULL,
+  `UpdateTime` datetime DEFAULT NULL,
+  `Name` varchar(50) DEFAULT NULL,
+  `Way` varchar(50) DEFAULT NULL,
+  `Money` decimal(11,2) DEFAULT '0.00',
+  `IsDeleted` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of app_withdraw
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for sys_area
@@ -576,8 +594,6 @@ CREATE TABLE `sys_dbbackup` (
 -- ----------------------------
 -- Records of sys_dbbackup
 -- ----------------------------
-INSERT INTO `sys_dbbackup` VALUES ('8b3fb1ff-07ab-46bb-a12a-85e65a9a748d', '1', 'roboBase', '201607190929504502.bak', '2.81 MB', '/Resource/DbBackup/201607190929504502.bak', '2016-07-19 09:29:52', null, null, '1', null, '2016-07-19 09:29:52', null, null, null, null, null);
-INSERT INTO `sys_dbbackup` VALUES ('ddbbfaf3-44b7-4e34-b0c5-c79e21aba83a', '1', 'roboBase', '201607181640402083.bak', '2.81 MB', '/Resource/DbBackup/201607181640402083.bak', '2016-07-18 16:40:41', null, null, '1', null, '2016-07-18 16:40:41', null, null, null, null, null);
 
 -- ----------------------------
 -- Table structure for sys_filterip
@@ -757,29 +773,75 @@ CREATE TABLE `sys_log` (
 INSERT INTO `sys_log` VALUES ('03729826-2757-43bf-8f7e-17ddb7394b14', '2018-11-13 11:40:30', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 11:40:30', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('03cf9192-b26d-43f6-ab29-c79d4af3628e', '2018-11-12 19:03:33', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 19:03:33', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('05f18e4b-0b38-407b-b1e4-a773ed553640', '2018-11-12 10:48:39', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 10:48:39', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('0782b0e8-3aed-4cff-bf67-dfd3418a0096', '2018-11-14 15:00:13', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-14 15:00:13', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('0f577b20-0408-41fd-97da-d58718c11162', '2018-11-12 17:22:19', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 17:22:19', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('1289b2f8-28ee-4ff3-8e00-516b5a6228d9', '2018-11-14 11:34:31', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-14 11:34:32', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('143636f7-5b8d-4168-b97b-fd84823b39e7', '2018-11-14 15:01:44', 'admin', '超级管理员', 'Login', '10.122.119.27', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-14 15:01:44', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('19b94edc-8877-4ca6-94a4-2acd1a0f9017', '2018-11-14 11:57:25', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-14 11:57:26', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('26238315-3aa2-4aaf-a397-73cb962e5220', '2018-11-12 17:21:19', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 17:21:19', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('2a80f12f-2a75-4746-a64d-4ae06232a9b7', '2018-11-12 10:51:18', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 10:51:18', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('2be950c4-89ab-414c-8870-ae21a097628f', '2018-11-13 23:08:00', 'admin', '超级管理员', 'Login', '10.122.119.27', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 23:08:00', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('3327cdce-5c7c-4b1d-9f9e-a460b51f93c5', '2018-11-12 10:50:36', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 10:50:37', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('3577fb96-4523-43e1-9a21-d4cdfedabd7e', '2018-11-12 17:58:18', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 17:58:19', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('376e25b9-b769-4f9e-b452-562b9222dc19', '2018-11-21 08:48:57', 'admin', '超级管理员', 'Login', '220.202.152.81', '湖南省长沙市 联通', null, '系统登录', '1', '登录成功', '2018-11-21 08:48:57', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('3e9e4fa9-3611-4a5a-b4a4-5d77260f40b8', '2018-11-15 23:23:53', 'admin', '超级管理员', 'Login', '110.54.160.216', '菲律宾', null, '系统登录', '1', '登录成功', '2018-11-15 23:23:54', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('424d7d22-9d91-45f2-b5a4-892dea900998', '2018-11-13 10:14:19', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 10:14:19', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('42a5cad7-f971-42ed-924c-93e403544a0b', '2018-11-13 15:14:56', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-13 15:14:57', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('442738bc-2887-4edc-a7f4-06d35541bbaa', '2018-11-12 10:51:25', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 10:51:25', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('46629243-fde9-4157-be01-c043da520728', '2018-11-13 19:01:25', 'admin', 'admin', 'Login', '43.250.200.24', '湖南省长沙市 联通', null, '系统登录', '0', '登录失败，验证码错误，请重新输入', '2018-11-13 19:01:28', null);
 INSERT INTO `sys_log` VALUES ('47c3985b-19b3-49d4-adc9-987c8717b2a0', '2018-11-12 19:03:24', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 19:03:25', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('4d940dd2-6aee-4d7f-bb22-a36b705f2fe7', '2018-11-14 19:45:11', 'admin', '超级管理员', 'Login', '183.17.232.89', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-14 19:45:11', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('4db7f874-aebb-42a8-83c4-04a18b331a95', '2018-11-13 18:29:44', 'admin', '超级管理员', 'Login', '127.0.0.1', '保留地址', null, '系统登录', '1', '登录成功', '2018-11-13 18:29:44', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('4ef6f46f-b164-4ec4-af30-82a7dd0e773b', '2018-11-14 22:08:15', 'admin', '超级管理员', 'Login', '183.17.233.9', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-14 22:08:15', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('5040be37-dc94-4eb2-ad14-dbbf3ed3b2f4', '2018-11-15 21:34:48', 'admin', '超级管理员', 'Login', '183.17.232.173', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-15 21:34:48', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('54f95628-2721-441a-840b-079c611da692', '2018-11-12 10:59:03', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 10:59:03', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('62cf19c7-3c04-499d-bb36-d006491406a1', '2018-11-13 15:15:04', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 15:15:04', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('686132be-07de-4570-a835-dd98f7fd4de3', '2018-11-15 21:09:52', 'admin', '超级管理员', 'Login', '110.54.160.216', '菲律宾', null, '系统登录', '1', '登录成功', '2018-11-15 21:09:52', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('6a319afc-bac9-4c8b-a877-5553f074810b', '2018-11-13 21:22:25', 'admin', '超级管理员', 'Login', '130.105.167.88', '菲律宾', null, '系统登录', '1', '登录成功', '2018-11-13 21:22:26', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('6b0a4e7e-9398-4e03-829f-a5edc0ba0eec', '2018-11-12 17:24:43', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 17:24:43', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('74004da4-d710-467b-a356-7da151224a50', '2018-11-20 19:32:45', 'admin', '超级管理员', 'Login', '110.54.195.233', '菲律宾', null, '系统登录', '1', '登录成功', '2018-11-20 19:32:45', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('7414e027-2339-4a6f-8545-90476f57b4cf', '2018-11-13 15:19:18', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-13 15:19:19', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('7551327f-79e5-4630-9da0-c243ff0d30db', '2018-11-21 11:30:02', 'admin', '超级管理员', 'Login', '154.48.247.21', '美国', null, '系统登录', '1', '登录成功', '2018-11-21 11:30:02', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('79caf4b9-ea2a-4ff3-bef9-a3f0f261fd1e', '2018-11-13 22:19:57', 'admin', '超级管理员', 'Login', '10.122.119.27', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 22:19:57', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('7ae6a5ff-d247-4078-a9fc-a99f69869d1a', '2018-11-12 17:22:11', 'admin', 'admin', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '0', '登录失败，验证码错误，请重新输入', '2018-11-12 17:22:11', null);
+INSERT INTO `sys_log` VALUES ('7ddcf07d-4d81-4b3e-b212-3a7611ccd9ab', '2018-11-13 16:49:14', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 16:49:14', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('812d368f-151e-43b6-a09e-8648bb7c870e', '2018-11-12 10:50:47', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 10:50:47', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('86165d5e-7968-42d3-8371-df132a61f879', '2018-11-15 22:32:14', 'admin', '超级管理员', 'Login', '183.17.237.15', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-15 22:32:14', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('8a6d4bc2-00c0-4c93-a7ff-1e2e76e238ce', '2018-11-12 10:46:54', 'admin', 'admin', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '0', '登录失败，密码不正确，请重新输入', '2018-11-12 10:46:58', null);
 INSERT INTO `sys_log` VALUES ('8b71e2ba-4b77-4cc3-a2b3-ce02d2212d56', '2018-11-12 17:22:02', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 17:22:02', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('90602f09-fdf1-4eeb-907f-122b81e6e653', '2018-11-13 22:23:59', 'admin', '超级管理员', 'Login', '183.17.239.19', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-13 22:24:00', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('942454d2-e885-4b84-9261-2f13a988514f', '2018-11-13 16:31:59', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 16:32:00', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('9446bde8-1a1d-4d86-9cf5-f0c10c05dfa6', '2018-11-13 16:54:52', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-13 16:54:53', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('97a3f6e9-5837-4f80-b3e8-a746be685fd2', '2018-11-15 14:30:19', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-15 14:30:20', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('98788c0f-8d7b-497f-823d-586ffdf78b69', '2018-11-13 16:50:25', 'admin', 'admin', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '0', '登录失败，密码不正确，请重新输入', '2018-11-13 16:50:25', null);
 INSERT INTO `sys_log` VALUES ('98c67c63-9c09-4433-80a7-b982da24fc30', '2018-11-13 11:10:03', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 11:10:03', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('998aabe9-16ff-43ac-ac90-5e55d8249e44', '2018-11-12 11:02:02', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 11:02:02', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('99ec72d2-9df7-47e8-87ad-26cc05cae065', '2018-11-13 16:55:11', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 16:55:11', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('9af792ce-94e5-4d5b-8837-2175bf589133', '2018-11-12 19:02:18', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 19:02:18', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('a004b818-6af1-49ee-b57e-094418cd6a83', '2018-11-14 11:34:16', 'admin', 'admin', 'Login', '154.48.247.21', '美国', null, '系统登录', '0', '登录失败，验证码错误，请重新输入', '2018-11-14 11:34:22', null);
+INSERT INTO `sys_log` VALUES ('a38d16bd-cd01-42da-b738-6ba299cea665', '2018-11-13 13:04:14', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 13:04:15', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('aab9045f-e7c1-43f2-bfeb-e1a2912d6ba7', '2018-11-13 21:23:12', 'admin', '超级管理员', 'Login', '183.17.239.19', '广东省深圳市 电信', null, '系统登录', '1', '登录成功', '2018-11-13 21:23:13', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('adc71829-9814-40c4-9f4b-1ef78265eb81', '2018-11-13 16:50:33', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 16:50:33', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('b1d25511-1559-467e-89bf-ebb19c0072ad', '2018-11-14 18:08:40', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-14 18:08:40', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('b2493553-ba15-4fba-a755-ffe6f0f373f0', '2018-11-21 08:50:24', 'admin', '超级管理员', 'Login', '220.202.152.81', '湖南省长沙市 联通', null, '系统登录', '1', '登录成功', '2018-11-21 08:50:24', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('bff42d19-c662-4e16-96a7-eb8b41bea2af', '2018-11-12 11:04:08', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 11:04:08', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('c2822db0-96bb-4ab8-b869-5b94ec2a9c2f', '2018-11-13 10:55:53', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 10:55:53', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('c6a406d0-2f44-4790-bdfc-9c4102da38b9', '2018-11-13 15:02:40', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 15:02:40', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('c6f07508-e1bd-4170-8fc7-0b43729459ea', '2018-11-13 22:19:56', 'admin', 'admin', 'Login', '10.122.119.27', '本地局域网', null, '系统登录', '0', '登录失败，验证码错误，请重新输入', '2018-11-13 22:19:56', null);
+INSERT INTO `sys_log` VALUES ('c92011c4-0417-4f8c-bbba-5300829f3dc6', '2018-11-13 17:24:57', 'admin', '超级管理员', 'Login', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '登录成功', '2018-11-13 17:24:57', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('cabf0a5e-7379-4587-9ea2-30c8aebbe155', '2018-11-13 15:19:34', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 15:19:34', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('cdac6879-da71-4b4f-b2a4-523e4a4181df', '2018-11-13 16:50:08', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-13 16:50:09', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('d3160a73-f009-4d2a-8ffb-15683fb26e7b', '2018-11-12 17:58:31', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-12 17:58:31', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('d43ffb31-d05e-417b-9cde-767069148a1a', '2018-11-13 14:08:31', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 14:08:31', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('d8fd52ed-29b9-48a6-9c64-9f0fd04cf2e3', '2018-11-14 20:37:45', 'admin', '超级管理员', 'Login', '110.54.190.28', '菲律宾', null, '系统登录', '1', '登录成功', '2018-11-14 20:37:45', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('d9bdefbc-fa18-4e4f-9cd2-e13b44f8dc3b', '2018-11-13 14:19:42', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 14:19:43', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('dc6a0791-0a83-44e9-a2a1-b67750536f8f', '2018-11-13 10:23:38', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 10:23:38', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('e8e9dbd1-44b1-4b32-b735-3f948465f5bb', '2018-11-12 11:01:54', 'admin', '超级管理员', 'Exit', '192.168.1.123', '本地局域网', null, '系统登录', '1', '安全退出系统', '2018-11-12 11:01:55', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('ea230450-749e-4962-9eb9-6a28339d48f3', '2018-11-13 19:01:35', 'admin', '超级管理员', 'Login', '43.250.200.24', '湖南省长沙市 联通', null, '系统登录', '1', '登录成功', '2018-11-13 19:01:36', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 INSERT INTO `sys_log` VALUES ('f28a41b9-5dd3-4b62-97fb-a69253db6f59', '2018-11-12 10:44:44', 'admin', 'admin', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '0', '登录失败，密码不正确，请重新输入', '2018-11-12 10:44:48', null);
+INSERT INTO `sys_log` VALUES ('f5a0a2ec-d7f6-47ca-a1c3-0be299b805cb', '2018-11-13 17:37:11', 'admin', '超级管理员', 'Login', '192.168.1.123', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-13 17:37:11', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('f927e513-024a-4df5-892f-0017264fce46', '2018-11-14 11:55:13', 'admin', '超级管理员', 'Exit', '154.48.247.21', '香港特别行政区', null, '系统登录', '1', '安全退出系统', '2018-11-14 11:55:14', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
+INSERT INTO `sys_log` VALUES ('fad587fd-b9ae-4d05-9927-7e8d98f5d4a5', '2018-11-16 16:32:20', 'admin', '超级管理员', 'Login', '172.16.0.2', '本地局域网', null, '系统登录', '1', '登录成功', '2018-11-16 16:32:20', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba');
 
 -- ----------------------------
 -- Table structure for sys_module
@@ -826,10 +888,13 @@ INSERT INTO `sys_module` VALUES ('42fe6bcd-7e39-4606-a1c3-87e795188bc3', '9F5684
 INSERT INTO `sys_module` VALUES ('462027E0-0848-41DD-BCC3-025DCAE65555', '0', '0', null, '系统管理', 'fa fa-gears', '&nbsp;', 'expand', '0', '1', '0', '0', '0', '40', '0', '1', '&nbsp;', null, null, '2018-11-01 17:28:36', null, null, null, '1');
 INSERT INTO `sys_module` VALUES ('51174D27-3001-4CCF-AAB2-0AA2A6CEAA50', '0', '0', null, '配置管理', 'fa fa-bar-chart-o', '&nbsp;', 'expand', '0', '1', '0', '0', '0', '20', '0', '1', '&nbsp;', null, null, '2018-11-01 17:28:20', null, null, null, '1');
 INSERT INTO `sys_module` VALUES ('5328e771-aab3-4967-bfb9-a7f16f0d2020', '51174D27-3001-4CCF-AAB2-0AA2A6CEAA50', '0', null, '任务配置', '&nbsp;', '/Tesla/Task/Index', 'iframe', '0', '0', '0', '0', '0', '10', null, '1', '&nbsp;', '2018-11-01 15:55:41', null, '2018-11-12 17:21:59', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
+INSERT INTO `sys_module` VALUES ('53df9c6b-c1e0-48c4-839b-641ce17cb217', '9F56840F-DF92-4936-A48C-8F65A39291A2', '0', null, '提现记录', '&nbsp;', '/Tesla/Withdraw/Index', 'iframe', '0', '0', '0', '0', '0', '40', null, '1', '&nbsp;', '2018-11-13 15:11:48', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '2018-11-13 15:14:48', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
+INSERT INTO `sys_module` VALUES ('5d1bfd33-1ab7-47d1-9d29-87820485960e', '9F56840F-DF92-4936-A48C-8F65A39291A2', '0', null, '客户端参数', '&nbsp;', '/Tesla/BetParam/Index', 'iframe', '0', '0', '0', '0', '0', '50', null, '1', '&nbsp;', '2018-11-14 11:53:38', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '2018-11-14 11:53:54', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
 INSERT INTO `sys_module` VALUES ('64A1C550-2C61-4A8C-833D-ACD0C012260F', '462027E0-0848-41DD-BCC3-025DCAE65555', '0', null, '系统菜单', '&nbsp;', '/SystemManage/Module/Index', 'iframe', '1', '0', '0', '0', '0', '30', '0', '1', '&nbsp;', null, null, '2018-11-01 15:58:42', null, null, null, '1');
 INSERT INTO `sys_module` VALUES ('73FD1267-79BA-4E23-A152-744AF73117E9', '0', '0', null, '系统安全', 'fa fa-desktop', '&nbsp;', 'expand', '0', '1', '0', '0', '0', '30', '0', '1', '&nbsp;', null, null, '2018-11-01 17:28:25', null, null, null, '1');
 INSERT INTO `sys_module` VALUES ('91A6CFAD-B2F9-4294-BDAE-76DECF412C6C', '462027E0-0848-41DD-BCC3-025DCAE65555', '0', null, '角色管理', '&nbsp;', '/SystemManage/Role/Index', 'iframe', '1', '0', '0', '0', '0', '20', '0', '1', '&nbsp;', null, null, '2018-11-12 11:00:59', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
 INSERT INTO `sys_module` VALUES ('96EE855E-8CD2-47FC-A51D-127C131C9FB9', '73FD1267-79BA-4E23-A152-744AF73117E9', '0', null, '系统日志', '&nbsp;', '/SystemSecurity/Log/Index', 'iframe', '1', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-12 11:01:32', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
+INSERT INTO `sys_module` VALUES ('9f05e7af-120a-45a4-b8df-548ad04508fc', '9F56840F-DF92-4936-A48C-8F65A39291A2', '0', null, '充值记录', '&nbsp;', '/Tesla/Charge/Index', 'iframe', '0', '0', '0', '0', '0', '30', null, '1', '&nbsp;', '2018-11-13 15:09:36', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '2018-11-13 15:14:39', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
 INSERT INTO `sys_module` VALUES ('9F56840F-DF92-4936-A48C-8F65A39291A2', '0', '0', null, '统计报表', 'fa fa-tags', '&nbsp;', 'expand', '0', '1', '0', '0', '0', '10', '0', '1', '&nbsp;', null, null, '2018-11-01 17:28:30', null, null, null, '1');
 INSERT INTO `sys_module` VALUES ('a3a4742d-ca39-42ec-b95a-8552a6fae579', '73FD1267-79BA-4E23-A152-744AF73117E9', '0', null, '访问控制', '&nbsp;', '/SystemSecurity/FilterIP/Index', 'iframe', '1', '0', '0', '0', '0', '2', null, '1', '&nbsp;', '2016-07-17 22:06:10', null, '2018-11-12 11:01:41', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, '1');
 INSERT INTO `sys_module` VALUES ('AD4BC418-B66E-48C7-BC13-81590056CD15', null, null, null, '气泡图', null, null, 'iframe', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '1');
@@ -872,6 +937,7 @@ CREATE TABLE `sys_modulebutton` (
 -- Records of sys_modulebutton
 -- ----------------------------
 INSERT INTO `sys_modulebutton` VALUES ('07d718d1-d1de-420d-8a31-1cc11d3e8f8e', '7B959522-BE45-4747-B89D-592C7F3987A5', '0', '0', 'NF-view', '查看', null, '1', null, null, '0', '0', '0', '0', '60', null, '1', null, '2018-11-03 15:58:59', null, null, null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('0816696a-975c-46fa-a240-207d8bb5b817', 'e72c75d0-3a69-41ad-b220-13c9a62ec788', '0', '0', 'NF-clear', '清除数据', null, '1', 'btn_clear()', null, '0', '0', '0', '0', '40', null, '1', null, '2018-11-13 16:50:04', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('0ce03e54-0a2f-4e2a-a6c9-da949ce488a0', 'D2ECB516-4CB7-49B1-B536-504382115DD2', '0', '0', 'NF-view', '查看列表', '&nbsp;', '1', '&nbsp;', '&nbsp;', '0', '0', '0', '0', '60', null, '1', '&nbsp;', '2018-11-03 15:58:59', null, '2018-11-05 10:52:58', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('0d777b07-041a-4205-a393-d1a009aaafc7', '423A200B-FA5F-4B29-B7B7-A3F5474B725F', '0', '0', 'NF-edit', '修改字典', '&nbsp;', '2', 'btn_edit()', '/Admin/ItemsData/Form', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:39:12', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('0f0596f6-aa50-4df0-ad8e-af867cb4a9de', 'e72c75d0-3a69-41ad-b220-13c9a62ec788', '0', '0', 'NF-delete', '删除备份', '&nbsp;', '2', 'btn_delete()', '/Admin/DbBackup/DeleteForm', '0', '0', '0', '0', '2', '0', '1', '&nbsp;', null, null, '2018-11-05 10:49:49', null, null, null);
@@ -879,6 +945,7 @@ INSERT INTO `sys_modulebutton` VALUES ('104bcc01-0cfd-433f-87f4-29a8a3efb313', '
 INSERT INTO `sys_modulebutton` VALUES ('13c9a15f-c50d-4f09-8344-fd0050f70086', 'F298F868-B689-4982-8C8B-9268CBF0308D', '0', '0', 'NF-add', '新建岗位', '&nbsp;', '1', 'btn_add()', '/Admin/Duty/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:44:03', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('14617a4f-bfef-4bc2-b943-d18d3ff8d22f', '38CA5A66-C993-4410-AF95-50489B22939C', '0', '0', 'NF-delete', '删除用户', '&nbsp;', '2', 'btn_delete()', '/Admin/User/DeleteForm', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:37:43', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('15362a59-b242-494a-bc6e-413b4a63580e', '38CA5A66-C993-4410-AF95-50489B22939C', '0', '0', 'NF-disabled', '禁用', '&nbsp;', '2', 'btn_disabled()', '/Admin/User/DisabledAccount', '0', '0', '0', '0', '6', null, '1', '&nbsp;', '2016-07-25 15:25:54', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '2018-11-05 10:38:04', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('1a3dc288-0956-45a5-98d3-26a0e14c720f', '5d1bfd33-1ab7-47d1-9d29-87820485960e', '0', '0', 'NF-Details', '查看参数', '&nbsp;', '2', 'btn_details()', '/Admin/Organize/Details', '0', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-14 11:55:09', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('1ee1c46b-e767-4532-8636-936ea4c12003', '423A200B-FA5F-4B29-B7B7-A3F5474B725F', '0', '0', 'NF-delete', '删除字典', '&nbsp;', '2', 'btn_delete()', '/Admin/ItemsData/DeleteForm', '0', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-05 10:39:27', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('2049aea5-7d8f-4159-b871-60819d62515f', '96EE855E-8CD2-47FC-A51D-127C131C9FB9', '0', '0', 'NF-Details', '查看日志', null, '2', 'btn_details()', '/Admin/Log/Details', '0', '0', '0', '0', '20', null, '1', null, '2018-11-06 10:58:50', '16da6393-2be6-4f6c-b298-21aa586fb852', null, null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('239077ff-13e1-4720-84e1-67b6f0276979', '91A6CFAD-B2F9-4294-BDAE-76DECF412C6C', '0', '0', 'NF-delete', '删除角色', '&nbsp;', '2', 'btn_delete()', '/Admin/Role/DeleteForm', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:42:19', null, null, null);
@@ -892,6 +959,7 @@ INSERT INTO `sys_modulebutton` VALUES ('3a35c662-a356-45e4-953d-00ebd981cad6', '
 INSERT INTO `sys_modulebutton` VALUES ('3eb10a27-9540-49e7-9d66-d371a3a6f1e3', '91cebeab-fd99-4612-a20e-bc06befc7cb6', '0', '0', 'NF-edit', '修改预设开奖', '&nbsp;', '2', 'btn_edit()', '/Game/Preset/Form', '0', '0', '0', '0', '20', null, '1', '&nbsp;', '2018-11-02 14:09:21', null, '2018-11-05 10:47:49', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('40b17b3f-dfe4-420d-a328-851e9632e992', '39E97B05-7B6F-4069-9972-6F9643BC3042', '0', '0', 'NF-manual', '手动开奖', '&nbsp;', '1', 'btn_manual()', '/Game/Result/Manual', '0', '0', '0', '0', '30', null, '1', '&nbsp;', '2018-11-03 12:13:49', null, '2018-11-05 10:51:17', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('41862743-f703-4b6d-be54-08d253eb0ebc', 'e72c75d0-3a69-41ad-b220-13c9a62ec788', '0', '0', 'NF-add', '新建备份', '&nbsp;', '1', 'btn_add()', '/Admin/DbBackup/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:49:32', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('4676833f-c9ae-4684-b551-952282851de2', '5d1bfd33-1ab7-47d1-9d29-87820485960e', '0', '0', 'NF-delete', '删除参数', '&nbsp;', '2', 'btn_delete()', '&nbsp;', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-14 11:55:02', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('4727adf7-5525-4c8c-9de5-39e49c268349', '38CA5A66-C993-4410-AF95-50489B22939C', '0', '0', 'NF-edit', '修改用户', '&nbsp;', '2', 'btn_edit()', '/Admin/User/Form', '0', '0', '0', '0', '2', '0', '1', '&nbsp;', null, null, '2018-11-05 10:37:32', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('48afe7b3-e158-4256-b50c-cd0ee7c6dcc9', '337A4661-99A5-4E5E-B028-861CACAF9917', '0', '0', 'NF-add', '新建区域', '&nbsp;', '1', 'btn_add()', '/Admin/Area/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:36:35', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('4b876abc-1b85-47b0-abc7-96e313b18ed8', '423A200B-FA5F-4B29-B7B7-A3F5474B725F', '0', '0', 'NF-itemstype', '分类管理', '&nbsp;', '1', 'btn_itemstype()', '/Admin/ItemsType/Index', '0', '0', '0', '0', '2', null, '1', '&nbsp;', '2016-07-25 15:36:21', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '2018-11-05 10:39:02', null, null, null);
@@ -899,9 +967,11 @@ INSERT INTO `sys_modulebutton` VALUES ('4bb19533-8e81-419b-86a1-7ee56bf1dd45', '
 INSERT INTO `sys_modulebutton` VALUES ('5176dc92-42b5-4151-b899-addcb395429c', '5328e771-aab3-4967-bfb9-a7f16f0d2020', '0', '0', 'NF-disabled', '禁用', '&nbsp;', '2', 'btn_disabled()', '/Game/KillRate/disable', '0', '0', '0', '0', '50', null, '1', '&nbsp;', '2018-11-02 10:42:52', null, '2018-11-05 10:46:42', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('534852f4-0989-4bb0-aea1-b0f8e8df94c4', '39E97B05-7B6F-4069-9972-6F9643BC3042', '0', '0', 'NF-view', '查看', '&nbsp;', '1', '&nbsp;', '/Game/Result/Details', '0', '0', '0', '0', '60', null, '1', '&nbsp;', '2018-11-03 15:58:59', null, '2018-11-05 10:51:34', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('5d708d9d-6ebe-40ea-8589-e3efce9e74ec', '91A6CFAD-B2F9-4294-BDAE-76DECF412C6C', '0', '0', 'NF-add', '新建角色', '&nbsp;', '1', 'btn_add()', '/Admin/Role/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:42:03', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('64f906e4-161e-428b-8ccc-cd031b042b4a', '53df9c6b-c1e0-48c4-839b-641ce17cb217', '0', '0', 'NF-add', '新建提现', '&nbsp;', '1', 'btn_add()', '&nbsp;', '0', '0', '0', '0', '10', '0', '1', '&nbsp;', null, null, '2018-11-13 15:19:16', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('709a4a7b-4d98-462d-b47c-351ef11db06f', '252229DB-35CA-47AE-BDAE-C9903ED5BA7B', '0', '0', 'NF-Details', '查看机构', '&nbsp;', '2', 'btn_details()', '/Admin/Organize/Details', '0', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-05 10:36:02', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('74eecdfb-3bee-405d-be07-27a78219c179', '38CA5A66-C993-4410-AF95-50489B22939C', '0', '0', 'NF-add', '新建用户', '&nbsp;', '1', 'btn_add()', '/Admin/User/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:37:24', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('7b778be3-9799-42a3-8817-6b0ea992fb78', '5328e771-aab3-4967-bfb9-a7f16f0d2020', '0', '0', 'NF-enabled', '启用', '&nbsp;', '2', 'btn_enabled()', '/Game/KillRate/Enable', '0', '0', '0', '0', '40', null, '1', '&nbsp;', '2018-11-02 10:42:24', null, '2018-11-05 10:46:35', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('7e8e1b63-4a2c-4673-9574-181fba993617', '53df9c6b-c1e0-48c4-839b-641ce17cb217', '0', '0', 'NF-delete', '删除提现', '&nbsp;', '2', 'btn_delete()', '&nbsp;', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-13 15:19:09', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('82f162cb-beb9-4a79-8924-cd1860e26e2e', '423A200B-FA5F-4B29-B7B7-A3F5474B725F', '0', '0', 'NF-Details', '查看字典', '&nbsp;', '2', 'btn_details()', '/Admin/ItemsData/Details', '0', '0', '0', '0', '5', '0', '1', '&nbsp;', null, null, '2018-11-05 10:39:37', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('8379135e-5b13-4236-bfb1-9289e6129034', 'a3a4742d-ca39-42ec-b95a-8552a6fae579', '0', '0', 'NF-delete', '删除策略', '&nbsp;', '2', 'btn_delete()', '/Admin/FilterIP/DeleteForm', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:49:12', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('85F5212F-E321-4124-B155-9374AA5D9C10', '64A1C550-2C61-4A8C-833D-ACD0C012260F', '0', '0', 'NF-delete', '删除菜单', '&nbsp;', '2', 'btn_delete()', '/Admin/Menu/DeleteForm', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:40:57', null, null, null);
@@ -917,22 +987,21 @@ INSERT INTO `sys_modulebutton` VALUES ('a95bf423-f3e7-478f-941e-96712b673a06', '
 INSERT INTO `sys_modulebutton` VALUES ('aaf58c1b-4af2-4e5f-a3e4-c48e86378191', 'a3a4742d-ca39-42ec-b95a-8552a6fae579', '0', '0', 'NF-edit', '修改策略', '&nbsp;', '2', 'btn_edit()', '/Admin/FilterIP/Form', '0', '0', '0', '0', '2', '0', '1', '&nbsp;', null, null, '2018-11-05 10:49:05', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('abfdff21-8ebf-4024-8555-401b4df6acd9', '38CA5A66-C993-4410-AF95-50489B22939C', '0', '0', 'NF-Details', '查看用户', '&nbsp;', '2', 'btn_details()', '/Admin/User/Details', '1', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-05 10:37:49', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('aed66cfb-d78e-43d4-9987-c714546be7eb', 'e72c75d0-3a69-41ad-b220-13c9a62ec788', '0', '0', 'NF-download', '下载备份', '&nbsp;', '2', 'btn_download()', '/Admin/DbBackup/DownloadBackup', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-05 10:49:57', null, null, null);
-INSERT INTO `sys_modulebutton` VALUES ('b199f3cc-54bc-4872-90a3-2eba3dab7c91', '5328e771-aab3-4967-bfb9-a7f16f0d2020', '0', '0', 'NF-add', '新建杀率', '&nbsp;', '1', 'btn_add()', '/Game/KillRate/Form', '0', '0', '0', '0', '10', null, '1', '&nbsp;', '2018-11-02 10:40:52', null, '2018-11-05 10:45:54', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('b4077b35-1da7-4a7f-aa9a-c0502c2daa58', '9f05e7af-120a-45a4-b8df-548ad04508fc', '0', '0', 'NF-delete', '删除充值', '&nbsp;', '2', 'btn_delete()', '&nbsp;', '0', '0', '0', '0', '3', '0', '1', '&nbsp;', null, null, '2018-11-13 15:18:41', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('beba03ce-addd-4ae6-932d-fe8d54330f41', '822E2523-5105-4AE0-BF48-62459D3641F6', '0', '0', 'NF-delete', '删除注单', '&nbsp;', '2', 'btn_delete()', '/Game/Order/DeleteForm', '0', '0', '0', '0', '10', null, '1', '&nbsp;', '2018-11-01 18:49:43', null, '2018-11-05 10:52:13', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('c005223a-6848-4db5-af5b-201e666d7418', '7f7e2239-7c61-4ca3-94e4-56866b6919cb', '0', '0', 'NF-view', '查看', null, '1', null, null, '0', '0', '0', '0', '60', null, '1', null, '2018-11-03 15:58:59', null, null, null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('c90c4d44-a08c-4033-afc1-087284577398', 'D2ECB516-4CB7-49B1-B536-504382115DD2', '0', '0', 'NF-delete', '删除日志', 'fa fa-trash-o', '2', 'btn_delete()', '/Game/Log/DeleteForm', '0', '0', '0', '0', '10', null, '1', '&nbsp;', '2018-11-01 15:16:25', null, '2018-11-05 10:52:31', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('c98e70c2-5916-4b18-b3ad-cc5a76c9afe0', '91cebeab-fd99-4612-a20e-bc06befc7cb6', '0', '0', 'NF-view', '查看', '&nbsp;', '1', '&nbsp;', '/Game/Preset/Details', '0', '0', '0', '0', '60', null, '1', '&nbsp;', '2018-11-03 15:58:59', null, '2018-11-05 10:48:27', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('cca45eac-cf6c-4051-b319-80be89e81ca8', '91cebeab-fd99-4612-a20e-bc06befc7cb6', '0', '0', 'NF-enabled', '启用', '&nbsp;', '2', 'btn_enabled()', '/Game/Preset/Disable', '0', '0', '0', '0', '50', null, '1', '&nbsp;', '2018-11-02 14:10:49', null, '2018-11-05 10:48:18', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('cd65e50a-0bea-45a9-b82e-f2eacdbd209e', '252229DB-35CA-47AE-BDAE-C9903ED5BA7B', '0', '0', 'NF-add', '新建机构', '&nbsp;', '1', 'btn_add()', '/Admin/Organize/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:35:37', null, null, null);
+INSERT INTO `sys_modulebutton` VALUES ('d24ebe01-f794-487c-9214-baacb78eb13c', '9f05e7af-120a-45a4-b8df-548ad04508fc', '0', '0', 'NF-add', '新建充值', '&nbsp;', '1', 'btn_add()', '&nbsp;', '0', '0', '0', '0', '10', '0', '1', '&nbsp;', null, null, '2018-11-13 15:18:27', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', null, null);
 INSERT INTO `sys_modulebutton` VALUES ('d4074121-0d4f-465e-ad37-409bbe15bf8a', 'a3a4742d-ca39-42ec-b95a-8552a6fae579', '0', '0', 'NF-add', '新建策略', '&nbsp;', '1', 'btn_add()', '/Admin/FilterIP/Form', '0', '0', '0', '0', '1', '0', '1', '&nbsp;', null, null, '2018-11-05 10:48:59', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('D4FCAFED-7640-449E-80B7-622DDACD5012', '64A1C550-2C61-4A8C-833D-ACD0C012260F', '0', '0', 'NF-Details', '查看菜单', '&nbsp;', '2', 'btn_details()', '/Admin/Menu/Details', '1', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-05 10:41:05', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('d80320c8-97dc-4aca-b1eb-0cea2a331f86', '822E2523-5105-4AE0-BF48-62459D3641F6', '0', '0', 'NF-view', '查看', null, '1', null, null, '0', '0', '0', '0', '60', null, '1', null, '2018-11-03 15:58:59', null, null, null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('E29FCBA7-F848-4A8B-BC41-A3C668A9005D', '64A1C550-2C61-4A8C-833D-ACD0C012260F', '0', '0', 'NF-edit', '修改菜单', '&nbsp;', '2', 'btn_edit()', '/Admin/Menu/Form', '0', '0', '0', '0', '2', '0', '1', '&nbsp;', null, null, '2018-11-05 10:40:51', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('e57d5ab4-990d-427c-bc89-ca0d5d514810', 'fe3c9278-5c7d-4081-a205-bf0ded91e439', '0', '0', 'NF-view', '查看', null, '1', null, null, '0', '0', '0', '0', '60', null, '1', null, '2018-11-03 15:58:59', null, null, null, null, null);
-INSERT INTO `sys_modulebutton` VALUES ('e5ee91bd-8945-4887-bb7e-28e858c20252', '5328e771-aab3-4967-bfb9-a7f16f0d2020', '0', '0', 'NF-delete', '删除杀率', '&nbsp;', '2', 'btn_delete()', '/Game/KillRate/DeleteForm', '0', '0', '0', '0', '30', null, '1', '&nbsp;', '2018-11-02 10:41:52', null, '2018-11-05 10:46:21', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('e75e4efc-d461-4334-a764-56992fec38e6', 'F298F868-B689-4982-8C8B-9268CBF0308D', '0', '0', 'NF-edit', '修改岗位', '&nbsp;', '2', 'btn_edit()', '/Admin/Duty/Form', '0', '0', '0', '0', '2', '0', '1', '&nbsp;', null, null, '2018-11-05 10:44:10', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('e7eee13f-ebc0-435d-806a-2e932216eba5', '91cebeab-fd99-4612-a20e-bc06befc7cb6', '0', '0', 'NF-disabled', '禁用', '&nbsp;', '2', 'btn_disabled()', '/Game/Preset/Enable', '0', '0', '0', '0', '40', null, '1', '&nbsp;', '2018-11-02 14:10:18', null, '2018-11-05 10:48:08', null, null, null);
-INSERT INTO `sys_modulebutton` VALUES ('f114ece3-cb46-4bce-995e-7c81b120e33c', '5328e771-aab3-4967-bfb9-a7f16f0d2020', '0', '0', 'NF-view', '查看', '&nbsp;', '1', '&nbsp;', '/Game/KillRate/Details', '0', '0', '0', '0', '60', null, '1', '&nbsp;', '2018-11-03 15:58:59', null, '2018-11-05 10:46:50', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('f93763ff-51a1-478d-9585-3c86084c54f3', '91A6CFAD-B2F9-4294-BDAE-76DECF412C6C', '0', '0', 'NF-Details', '查看角色', '&nbsp;', '2', 'btn_details()', '/Admin/Role/Details', '0', '0', '0', '0', '4', '0', '1', '&nbsp;', null, null, '2018-11-05 10:42:27', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('FD3D073C-4F88-467A-AE3B-CDD060952CE6', '64A1C550-2C61-4A8C-833D-ACD0C012260F', '0', '0', 'NF-modulebutton', '按钮管理', '&nbsp;', '2', 'btn_modulebutton()', '/Admin/Button/Index', '0', '0', '0', '0', '5', '0', '1', '&nbsp;', null, null, '2018-11-05 10:41:46', null, null, null);
 INSERT INTO `sys_modulebutton` VALUES ('fe6087ad-e334-46ab-9ac7-79e15596b221', '42fe6bcd-7e39-4606-a1c3-87e795188bc3', '0', '0', 'NF-Details', '查看', null, '1', null, null, '0', '0', '0', '0', '10', null, '1', null, '2018-11-08 15:09:50', '783ce87b-e18e-4e93-bb6c-51b5d0c3c6c6', null, null, null, null);
@@ -978,7 +1047,7 @@ CREATE TABLE `sys_moduleforminstance` (
   `F_CreatorTime` datetime DEFAULT NULL COMMENT '创建时间',
   `F_CreatorUserId` varchar(50) DEFAULT NULL COMMENT '创建用户',
   PRIMARY KEY (`F_Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='模块表单实例';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='模块表单实例';
 
 -- ----------------------------
 -- Records of sys_moduleforminstance
@@ -1216,7 +1285,7 @@ CREATE TABLE `sys_user` (
   `F_WeChat` varchar(50) DEFAULT NULL COMMENT '微信',
   `F_ManagerId` varchar(50) DEFAULT NULL COMMENT '主管主键',
   `F_SecurityLevel` int(11) DEFAULT NULL COMMENT '安全级别',
-  `F_Signature` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '个性签名',
+  `F_Signature` text COMMENT '个性签名',
   `F_OrganizeId` varchar(50) DEFAULT NULL COMMENT '组织主键',
   `F_DepartmentId` text COMMENT '部门主键',
   `F_RoleId` text COMMENT '角色主键',
@@ -1272,7 +1341,7 @@ CREATE TABLE `sys_userlogon` (
 -- ----------------------------
 -- Records of sys_userlogon
 -- ----------------------------
-INSERT INTO `sys_userlogon` VALUES ('9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '24cdbc1923c229e41a05a7bf3282b6fe', '57d3031d6fc4a34d', null, null, null, null, null, '2018-11-13 11:10:02', '2018-11-13 11:40:29', null, null, '224', null, null, null, null, null, null);
+INSERT INTO `sys_userlogon` VALUES ('9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '9f2ec079-7d0f-4fe2-90ab-8b09a8302aba', '24cdbc1923c229e41a05a7bf3282b6fe', '57d3031d6fc4a34d', null, null, null, null, null, '2018-11-21 08:50:24', '2018-11-21 11:30:02', null, null, '261', null, null, null, null, null, null);
 INSERT INTO `sys_userlogon` VALUES ('d0cd28eb-ffee-44f7-b130-070c31d8819b', 'd0cd28eb-ffee-44f7-b130-070c31d8819b', '8625f83565ad606742925ceca70470df', 'f951b31dba32f0b2', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 INSERT INTO `sys_userlogon` VALUES ('f290b18b-ad12-48f7-a100-cb7edfd35251', 'f290b18b-ad12-48f7-a100-cb7edfd35251', 'bcd250fb5c14594e96e380bf18f44bc2', 'fb8b35ccc48023646ede75b7656da158', null, null, null, null, null, '2018-11-05 18:48:29', '2018-11-06 10:30:33', null, null, '10', null, null, null, null, null, null);
 

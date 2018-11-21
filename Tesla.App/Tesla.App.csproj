@@ -74,6 +74,7 @@
     <Compile Include="Tesla\BetOrderApp.cs" />
     <Compile Include="Tesla\BetParamApp.cs" />
     <Compile Include="Tesla\AppUserApp.cs" />
+    <Compile Include="Tesla\PlatformApp.cs" />
     <Compile Include="Tesla\WithdrawApp.cs" />
     <Compile Include="Tesla\ChargeApp.cs" />
     <Compile Include="Tesla\TaskApp.cs" />

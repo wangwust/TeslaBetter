@@ -71,10 +71,10 @@ namespace Tesla.Web.Controllers
 
             try
             {
-                if (Session["robo_session_verifycode"].IsEmpty() || Md5Helper.Md5(code.ToLower(), 16) != Session["robo_session_verifycode"].ToString())
-                {
-                    throw new Exception("验证码错误，请重新输入");
-                }
+                //if (Session["robo_session_verifycode"].IsEmpty() || Md5Helper.Md5(code.ToLower(), 16) != Session["robo_session_verifycode"].ToString())
+                //{
+                //    throw new Exception("验证码错误，请重新输入");
+                //}
 
                 SysUser userEntity = new UserApp().CheckLogin(username, password);
                 if (userEntity != null)

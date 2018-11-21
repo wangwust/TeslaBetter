@@ -6,11 +6,6 @@
     public class RegisterResponse
     {
         /// <summary>
-        /// 账户余额
-        /// </summary>
-        public decimal accountBalance { get; set; }
-
-        /// <summary>
         /// 登录token
         /// </summary>
         public string token { get; set; }

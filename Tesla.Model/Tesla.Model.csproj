@@ -60,6 +60,7 @@
     <Compile Include="DataBases\Admin\Base\EntityBase.cs" />
     <Compile Include="DataBases\Tesla\AppBetParam.cs" />
     <Compile Include="DataBases\Tesla\AppLog.cs" />
+    <Compile Include="DataBases\Tesla\AppPlatform.cs" />
     <Compile Include="DataBases\Tesla\AppTask.cs" />
     <Compile Include="DataBases\Tesla\BetOrder.cs" />
     <Compile Include="DataBases\Tesla\Charge.cs" />

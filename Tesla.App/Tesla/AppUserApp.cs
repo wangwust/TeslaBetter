@@ -28,8 +28,8 @@ namespace Tesla.App
         /// <returns></returns>
         public static int Insert(AppUser model)
         {
-            string sql = "insert into app_user(CreateTime, UserName, Password, RealName, CellPhone, WithdrawPwd, PlatformId, PlatformName)"
-                       + "values(now(), @UserName, @Password, @RealName, @CellPhone, @WithdrawPwd, @PlatformId, @PlatformName)";
+            string sql = "insert into app_user(CreateTime, UserName, Password, RealName, CellPhone, WithdrawPwd, PlatformId, PlatformName, IP, ClientType, Api)"
+                       + "values(now(), @UserName, @Password, @RealName, @CellPhone, @WithdrawPwd, @PlatformId, @PlatformName, @IP, @ClientType, @Api)";
             return DBHelper.Execute(sql, model);
         }
 
