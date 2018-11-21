@@ -93,17 +93,9 @@
       <Project>{d99343a5-7d5c-4431-b809-8d45a4c67785}</Project>
       <Name>Tesla.App</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tesla.Client.Service\Tesla.Client.Service.csproj">
-      <Project>{5e2a5837-db3b-4413-b393-c5d5df683375}</Project>
-      <Name>Tesla.Client.Service</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tesla.Model\Tesla.Model.csproj">
       <Project>{9d411ed4-cc62-46e1-b83e-f5fbee0b1831}</Project>
       <Name>Tesla.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tesla.Server.Service\Tesla.Server.Service.csproj">
-      <Project>{7487cf8b-3f4f-4672-8f4e-7e2dd317186d}</Project>
-      <Name>Tesla.Server.Service</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tesla.Service\Tesla.Service.csproj">
       <Project>{fe6cff95-81e7-4eca-a99e-88c0bacfb357}</Project>
