@@ -190,7 +190,8 @@ namespace Tesla
                 PlatformId = GetPlatformId(task.ServerCode.Trim()),
                 UserName = task.ServerUserName.Trim(),
                 Password = task.ServerUserPwd.Trim(),
-                ClientType = task.ServerDeviceType.Trim()
+                ClientType = task.ServerDeviceType.Trim(),
+                IP = task.ServerIP
             };
 
             ApiResponse<LoginResponse> response = LoginHelper.Login(param);
@@ -215,7 +216,8 @@ namespace Tesla
                 PlatformId = GetPlatformId(task.ClientCode.Trim()),
                 UserName = task.ClientUserName.Trim(),
                 Password = task.ClientUserPwd.Trim(),
-                ClientType = task.ClientDeviceType.Trim()
+                ClientType = task.ClientDeviceType.Trim(),
+                IP = task.ClientIP
             };
 
             response = LoginHelper.Login(param);

@@ -16,6 +16,11 @@ namespace Tesla
         /// <param name=""></param>
         public static ApiResponse<RegisterResponse> Register(RegisterParams param)
         {
+            if (string.IsNullOrEmpty(param.IP))
+            {
+                return new ApiResponse<RegisterResponse> { code = -1, msg = "请求IP不能为空！" };
+            }
+
             Dictionary<string, string> headerDic = new Dictionary<string, string>
             {
                 { "Client-Type", param.ClientType },
