@@ -61,13 +61,16 @@
     <Compile Include="Caching\CacheFactory.cs" />
     <Compile Include="Caching\CacheHelper.cs" />
     <Compile Include="Caching\ICacheHelper.cs" />
+    <Compile Include="Email\EmailSender.cs" />
     <Compile Include="Extentions\CommonExt.cs" />
     <Compile Include="Extentions\LinqExtention.cs" />
     <Compile Include="File\FileDownHelper.cs" />
     <Compile Include="File\FileHelper.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\DESHelper.cs" />
+    <Compile Include="Email\EmailHelper.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
+    <Compile Include="Helpers\IPHelper.cs" />
     <Compile Include="Helpers\Log4NetHelper.cs" />
     <Compile Include="Helpers\Md5Helper.cs" />
     <Compile Include="Helpers\NetHelper.cs" />

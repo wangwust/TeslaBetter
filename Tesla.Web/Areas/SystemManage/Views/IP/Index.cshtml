@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+<script>
+    $(function () {
+        gridList();
+    })
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/SystemManage/IP/GetGridJson",
+            height: $(window).height() - 128,
+            colModel: [
+                { label: "主键", name: "ID", hidden: true, key: true },
+                { label: '创建时间', name: 'CreateTime', width: 120, align: 'left' },
+                { label: '起始IP', name: 'StartIP', width: 120, align: 'left', sortable: false },
+                { label: '截止IP', name: 'EndIP', width: 120, align: 'left', sortable: false },
+                { label: '地区', name: 'Area', width: 200, align: 'left', sortable: false },
+                { label: '运营商', name: 'Carrier', width: 400, align: 'left', sortable: false },
+                {
+                    label: "是否国内", name: "IsChina", width: 60, align: "center",
+                    formatter: function (cellvalue) {
+                        return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'ID',
+            viewrecords: true
+        });
+
+        $("#btn_search").click(function () {
+            var queryJson = {
+                IP: $("#IP").val(),
+                Area: $("#Area").val()
+            }
+            $gridList.jqGrid('setGridParam', {
+                postData: { queryJson: JSON.stringify(queryJson) }
+            }).trigger('reloadGrid');
+        });
+    }
+
+</script>
+
+<div class="topPanel">
+    <div class="toolbar">
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+        <div class="operate">
+            <ul class="nav nav-pills">
+                <li class="first">已选中<span>1</span>项</li>
+            </ul>
+            <a href="javascript:;" class="close"></a>
+        </div>
+        <script>$('.toolbar').authorizeButton()</script>
+    </div>
+    <div class="search">
+        <table>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <input id="IP" class="form-control" type="text" placeholder="请输入IP" />
+                    </div>
+                </td>
+                <td style="padding-left: 20px;">
+                    <div class="input-group">
+                        <input id="Area" type="text" class="form-control" placeholder="请输入地区" style="width: 200px;">
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+    <div id="gridPager"></div>
+</div>

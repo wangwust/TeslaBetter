@@ -6,6 +6,7 @@
     $(function () {
         gridList();
     });
+
     function gridList() {
         var $gridList = $("#gridList");
         $gridList.dataGrid({
@@ -22,6 +23,7 @@
                 { label: '平台ID', name: 'PlatformId', width: 300, align: 'left', sortable: false },
                 { label: '平台名称', name: 'PlatformName', width: 60, align: 'left', sortable: false },
                 { label: '注册IP', name: 'IP', width: 100, align: 'left', sortable: false },
+                { label: 'IP所在地', name: 'IPArea', width: 200, align: 'left', sortable: false },
                 { label: '客户端类型', name: 'ClientType', width: 100, align: 'left', sortable: false },
                 { label: '接口地址', name: 'Api', width: 100, align: 'left', sortable: false },
             ],

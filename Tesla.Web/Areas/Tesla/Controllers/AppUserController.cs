@@ -82,6 +82,7 @@ namespace Tesla.Web.Areas.Tesla.Controllers
             }
 
             model.CreateTime = DateTime.Now;
+            model.IPArea = IPApp.GetArea(model.IP);
             int result = AppUserApp.Insert(model);
             return Auto(result);
         }

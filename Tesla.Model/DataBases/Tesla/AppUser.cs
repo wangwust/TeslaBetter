@@ -17,6 +17,7 @@ namespace Tesla.Model
         public string PlatformId { get; set; }
         public string PlatformName { get; set; }
         public string IP { get; set; }
+        public string IPArea { get; set; }
         public string ClientType { get; set; }
         public string Api { get; set; }
     }

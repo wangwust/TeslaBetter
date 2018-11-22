@@ -57,7 +57,8 @@ namespace Tesla.App
                            truncate table app_betorder;
                            truncate table app_betparam;
                            truncate table app_charge;
-                           truncate table app_withdraw; ";
+                           truncate table app_withdraw;
+                           truncate table app_user; ";
             return DBHelper.Execute(sql);
         }
 

@@ -69,6 +69,5 @@ namespace Tesla.Web.Areas.Tesla.Model
                 return sql;
             }
         }
-
     }
 }

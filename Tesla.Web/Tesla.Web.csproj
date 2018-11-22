@@ -359,6 +359,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\SystemManage\Controllers\AreaController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\DutyController.cs" />
+    <Compile Include="Areas\SystemManage\Controllers\IPController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\ItemsDataController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\ItemsTypeController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\ModuleButtonController.cs" />
@@ -385,6 +386,7 @@
     <Compile Include="Areas\Tesla\Model\AppLogParam.cs" />
     <Compile Include="Areas\Tesla\Model\BetOrderParam.cs" />
     <Compile Include="Areas\Tesla\Model\ChargeParam.cs" />
+    <Compile Include="Areas\Tesla\Model\IPParam.cs" />
     <Compile Include="Areas\Tesla\TeslaAreaRegistration.cs" />
     <Compile Include="Controllers\ClientsDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -481,6 +483,7 @@
     <Content Include="Areas\Tesla\Views\AppUser\Form.cshtml" />
     <Content Include="Areas\Tesla\Views\Platform\Index.cshtml" />
     <Content Include="Areas\Tesla\Views\Platform\Form.cshtml" />
+    <Content Include="Areas\SystemManage\Views\IP\Index.cshtml" />
     <None Include="Properties\PublishProfiles\1.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

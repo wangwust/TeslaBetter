@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Tesla.Model;
 using Tesla.Utils;
@@ -28,8 +27,8 @@ namespace Tesla.App
         /// <returns></returns>
         public static int Insert(AppUser model)
         {
-            string sql = "insert into app_user(CreateTime, UserName, Password, RealName, CellPhone, WithdrawPwd, PlatformId, PlatformName, IP, ClientType, Api)"
-                       + "values(now(), @UserName, @Password, @RealName, @CellPhone, @WithdrawPwd, @PlatformId, @PlatformName, @IP, @ClientType, @Api)";
+            string sql = "insert into app_user(CreateTime, UserName, Password, RealName, CellPhone, WithdrawPwd, PlatformId, PlatformName, IP, IPArea, ClientType, Api)"
+                       + "values(now(), @UserName, @Password, @RealName, @CellPhone, @WithdrawPwd, @PlatformId, @PlatformName, @IP, @IPArea, @ClientType, @Api)";
             return DBHelper.Execute(sql, model);
         }
 

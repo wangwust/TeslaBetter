@@ -59,6 +59,7 @@
     <Compile Include="DataBases\Admin\SysUserLogOn.cs" />
     <Compile Include="DataBases\Admin\Base\EntityBase.cs" />
     <Compile Include="DataBases\Tesla\AppBetParam.cs" />
+    <Compile Include="DataBases\Tesla\AppIP.cs" />
     <Compile Include="DataBases\Tesla\AppLog.cs" />
     <Compile Include="DataBases\Tesla\AppPlatform.cs" />
     <Compile Include="DataBases\Tesla\AppTask.cs" />
