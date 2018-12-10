@@ -40,7 +40,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ChenRan\ChenRan\ChenRan\Libs\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Tesla.Libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RabbitMQ.Client">
       <HintPath>..\Tesla.Libs\RabbitMQ.Client.dll</HintPath>

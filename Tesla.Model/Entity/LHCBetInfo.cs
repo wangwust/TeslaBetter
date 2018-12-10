@@ -3,7 +3,7 @@
     /// <summary>
     /// 投注信息
     /// </summary>
-    public class BetInfo
+    public class LHCBetInfo
     {
         /// <summary>
         /// 投注金额

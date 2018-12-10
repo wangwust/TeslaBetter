@@ -42,7 +42,7 @@ namespace Tesla.Model
         /// <summary>
         /// 彩种名称
         /// </summary>
-        public string LotteryName => "急速六合彩";
+        public string LotteryName { get; set; }
 
         /// <summary>
         /// 期号

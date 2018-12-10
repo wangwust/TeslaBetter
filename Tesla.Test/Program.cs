@@ -16,7 +16,10 @@ namespace Tesla.Test
             //MainWork work = new MainWork();
             //work.Start();
 
-            bool b = EmailHelper.Send("1277955953@qq.com", "测试", "这是一条测试邮件");
+            SCBetter better = new SCBetter();
+            better.Start();
+
+            //bool b = EmailHelper.Send("1277955953@qq.com", "测试", "这是一条测试邮件");
 
             Console.Read();
         }

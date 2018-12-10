@@ -18,6 +18,11 @@ namespace Tesla.Model
         public string Issue { get; set; }
 
         /// <summary>
+        /// 彩种ID
+        /// </summary>
+        public int LotteryID { get; set; }
+
+        /// <summary>
         /// 号码列表
         /// </summary>
         public List<string> NumList { get; set; }

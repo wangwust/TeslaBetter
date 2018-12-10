@@ -7,16 +7,18 @@ namespace Tesla.Service
     /// </summary>
     public class MainWork
     {
-        private LHCServerWork _lhcServer;
-        private LHCClientWork _lhcClient;
+        //private LHCServerWork _lhcServer;
+        //private LHCClientWork _lhcClient;
+        private SCBetter _scBetter;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         public MainWork()
         {
-            this._lhcServer = new LHCServerWork();
-            this._lhcClient = new LHCClientWork();
+            //this._lhcServer = new LHCServerWork();
+            //this._lhcClient = new LHCClientWork();
+            this._scBetter = new SCBetter();
         }
 
         /// <summary>
@@ -24,8 +26,9 @@ namespace Tesla.Service
         /// </summary>
         public void Start()
         {
-            this.RunLHCServer();
-            this.RunLHCClient();
+            //this.RunLHCServer();
+            //this.RunLHCClient();
+            this.RunSCBetter();
         }
 
         /// <summary>
@@ -33,8 +36,20 @@ namespace Tesla.Service
         /// </summary>
         public void Stop()
         {
-            this._lhcServer.Stop();
-            this._lhcClient.Stop();
+            this._scBetter.Stop();
+            //this._lhcServer.Stop();
+            //this._lhcClient.Stop();
+        }
+
+        /// <summary>
+        /// RunSCBetter
+        /// </summary>
+        private void RunSCBetter()
+        {
+            Task.Run(() =>
+            {
+                this._scBetter.Start();
+            });
         }
 
         /// <summary>
@@ -44,7 +59,7 @@ namespace Tesla.Service
         {
             Task.Run(() =>
             {
-                this._lhcServer.Start();
+                //this._lhcServer.Start();
             });
         }
 
@@ -55,7 +70,7 @@ namespace Tesla.Service
         {
             Task.Run(() =>
             {
-                this._lhcClient.Start();
+                //this._lhcClient.Start();
             });
         }
     }

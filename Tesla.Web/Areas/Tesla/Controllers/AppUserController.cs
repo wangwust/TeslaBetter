@@ -179,18 +179,18 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         private bool IsTaskRun(AppUser model, ref string errorMsg)
         {
             //当前用户是否正在运行
-            AppTask task = TaskApp.GetOne();
-            if (task.State == 1 && TeslaHelper.GetPlatformId(task.ServerCode) == model.PlatformId && task.ServerUserName == model.UserName)
-            {
-                errorMsg = $"任务：{task.Name}服务端正在使用用户：{model.UserName}。如需继续操作，请先将任务暂停";
-                return true;
-            }
+            //AppTask task = TaskApp.GetOne();
+            //if (task.State == 1 && TeslaHelper.GetPlatformId(task.ServerCode) == model.PlatformId && task.ServerUserName == model.UserName)
+            //{
+            //    errorMsg = $"任务：{task.Name}服务端正在使用用户：{model.UserName}。如需继续操作，请先将任务暂停";
+            //    return true;
+            //}
 
-            if (task.State == 1 && TeslaHelper.GetPlatformId(task.ClientCode) == model.PlatformId && task.ClientUserName == model.UserName)
-            {
-                errorMsg = $"任务：{task.Name}客户端正在使用用户：{model.UserName}。如需继续操作，请先将任务暂停";
-                return true;
-            }
+            //if (task.State == 1 && TeslaHelper.GetPlatformId(task.ClientCode) == model.PlatformId && task.ClientUserName == model.UserName)
+            //{
+            //    errorMsg = $"任务：{task.Name}客户端正在使用用户：{model.UserName}。如需继续操作，请先将任务暂停";
+            //    return true;
+            //}
 
             return false;
         }

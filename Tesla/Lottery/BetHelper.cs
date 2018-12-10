@@ -44,7 +44,7 @@ namespace Tesla
                 { "PeriodNumber", param.Issue },
             };
 
-            string result = HttpHelper.HttpPost(param.Api + "/order/bet/85", paramDic, headerDic, null);
+            string result = HttpHelper.HttpPost(param.Api + "/order/bet/" + param.LotteryID, paramDic, headerDic, null);
             ApiResponse<BetResponse> reponse = result.ToEntity<ApiResponse<BetResponse>>();
             return reponse;
         }
@@ -84,8 +84,8 @@ namespace Tesla
         /// <returns></returns>
         public static BetParams GetBetParams(LoginResponse response, List<string> numList, decimal money)
         {
-            List<BetInfo> list = (from s in numList
-                                  select new BetInfo
+            List<LHCBetInfo> list = (from s in numList
+                                  select new LHCBetInfo
                                   {
                                       money = money,
                                       Number = Convert.ToInt32(s)

@@ -31,6 +31,21 @@ namespace Tesla
         }
 
         /// <summary>
+        /// GetLotteryName
+        /// </summary>
+        /// <param name="lotteryId"></param>
+        /// <returns></returns>
+        public static string GetLotteryName(int lotteryId)
+        {
+            switch (lotteryId)
+            {
+                case 50: return "BJKC";
+                case 55: return "XYFT";
+                default: return "未知";
+            }
+        }
+
+        /// <summary>
         /// 是否跳过当期
         /// </summary>
         /// <returns></returns>
@@ -69,6 +84,49 @@ namespace Tesla
                 return false;
             }
 
+            if (appTask.SingleMoney <= 0)
+            {
+                errorMsg = "单注金额不合法";
+                return false;
+            }
+
+            if (appTask.PlatformCode.IsEmpty())
+            {
+                errorMsg = "平台代码不能为空";
+                return false;
+            }
+
+            if (appTask.PlatformApi.IsEmpty())
+            {
+                errorMsg = "平台Api不能为空";
+                return false;
+            }
+
+            if (appTask.UserName.IsEmpty())
+            {
+                errorMsg = "用户名不能为空";
+                return false;
+            }
+
+            if (appTask.UserPwd.IsEmpty())
+            {
+                errorMsg = "用户密码不能为空";
+                return false;
+            }
+
+            if (appTask.DeviceType.IsEmpty())
+            {
+                errorMsg = "设备类型不能为空";
+                return false;
+            }
+
+            if (appTask.IP.IsEmpty())
+            {
+                errorMsg = "IP不能为空";
+                return false;
+            }
+
+            /*
             if (appTask.ServerCode.IsEmpty())
             {
                 errorMsg = "服务端代码不能为空";
@@ -141,12 +199,6 @@ namespace Tesla
                 return false;
             }
 
-            if (appTask.SingleMoney <= 0)
-            {
-                errorMsg = "单注金额不合法";
-                return false;
-            }
-
             if (appTask.ServerMinNumCount > 49 || appTask.ServerMinNumCount < 1)
             {
                 errorMsg = "服务端投注的号码个数下限不合法";
@@ -164,6 +216,7 @@ namespace Tesla
                 errorMsg = "服务端投注的号码个数上限不能小于下限";
                 return false;
             }
+            */
 
             return true;
         }
@@ -176,6 +229,7 @@ namespace Tesla
         /// <returns></returns>
         public static bool CheckCanStartTask(int keyValue, ref string errorMsg)
         {
+            /*
             AppTask task = TaskApp.GetOne(keyValue);
             if (task == null)
             {
@@ -234,6 +288,7 @@ namespace Tesla
                 errorMsg = $"客户端账户余额：{balance}，不足一次投注：{money}";
                 return false;
             }
+            */
 
             return true;
         }
@@ -264,90 +319,6 @@ namespace Tesla
             if (response.IsSucceed)
             {
                 return response.data.accountBalance;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// 获取客户端余额
-        /// </summary>
-        /// <param name="task"></param>
-        /// <returns></returns>
-        public static decimal GetClientBalance(AppTask task)
-        {
-            LoginParams param = new LoginParams
-            {
-                UserName = task.ClientUserName,
-                Password = task.ClientUserPwd,
-                Api = task.ClientApi,
-                PlatformId = GetPlatformId(task.ClientCode),
-                ClientType = task.ClientDeviceType,
-                IP = task.ClientIP
-            };
-
-            int loops = 10, index = 0;
-            while (index < loops)
-            {
-                try
-                {
-                    ApiResponse<LoginResponse> response = LoginHelper.Login(param);
-                    if (response.IsSucceed)
-                    {
-                        return GetBalance(param.Api, param.IP, response.data);
-                    }
-                    else
-                    {
-                        index++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"用户登录异常。详情：{ex.ToString()}", SourceEnum.Client, task.ClientUserName);
-                    index++;
-                }
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// 获取服务端余额
-        /// </summary>
-        /// <param name="task"></param>
-        /// <returns></returns>
-        public static decimal GetServerBalance(AppTask task)
-        {
-            LoginParams param = new LoginParams
-            {
-                UserName = task.ServerUserName,
-                Password = task.ServerUserPwd,
-                Api = task.ServerApi,
-                PlatformId = GetPlatformId(task.ServerCode),
-                ClientType = task.ServerDeviceType,
-                IP = task.ServerIP
-            };
-
-            int loops = 10, index = 0;
-            while (index < loops)
-            {
-                try
-                {
-                    ApiResponse<LoginResponse> response = LoginHelper.Login(param);
-                    if (response.IsSucceed)
-                    {
-                        return GetBalance(param.Api, param.IP, response.data);
-                    }
-                    else
-                    {
-                        index++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"用户登录异常。详情：{ex.ToString()}", SourceEnum.Server, task.ServerUserName);
-                    index++;
-                }
             }
 
             return 0;
@@ -405,13 +376,60 @@ namespace Tesla
                 Source = source,
                 BeforeBalance = balance + task.SingleMoney * list.Count,
                 AfterBalance = balance,
-                UserName = source == 1 ? task.ServerUserName : task.ClientUserName
+                UserName = task.UserName
             };
 
             int result = BetOrderApp.Insert(order);
             if (result < 0)
             {
                 TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"保存注单失败。注单：{order.ToJson()}", SourceEnum.Server, order.UserName);
+            }
+        }
+
+        /// <summary>
+        /// 更新长龙
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="longQueue"></param>
+        /// <param name="lotteryId"></param>
+        public static void UpdateLongQueue(AppTask task, LongQueue longQueue, int lotteryId)
+        {
+            string remark = ReversePlatCateName(longQueue.PlayCateName);
+            int result = GamePlayApp.SetLongQueue(remark, lotteryId);
+            if (result < 0)
+            {
+                WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"设置长龙失败。ID：{lotteryId}，Remark：{remark}", SourceEnum.Server, task.UserName);
+            }
+        }
+
+        /// <summary>
+        /// 保存注单
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="fiftyNumList"></param>
+        /// <param name="issueNo"></param>
+        public static void SaveBetOrder(AppTask task, decimal totalMoney, string issueNo, decimal balance, string cateName, string lotteryName)
+        {
+            BetOrder order = new BetOrder
+            {
+                CreateTime = DateTime.Now,
+                TaskId = task.ID,
+                TaskName = task.Name,
+                Issue = Convert.ToInt64(issueNo),
+                Number = cateName,
+                SingleMoney = task.SingleMoney,
+                TotalMoney = totalMoney,
+                Source = 1,
+                BeforeBalance = balance + totalMoney,
+                AfterBalance = balance,
+                UserName = task.UserName,
+                LotteryName = lotteryName
+            };
+
+            int result = BetOrderApp.Insert(order);
+            if (result < 0)
+            {
+                WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"保存注单失败。注单：{order.ToJson()}", SourceEnum.Server, order.UserName);
             }
         }
 
@@ -437,10 +455,50 @@ namespace Tesla
         /// <returns></returns>
         public static bool NeedReLogin(AppTask task, LoginResponse loginResponse, int source)
         {
-            string userName = source == SourceEnum.Server ? task.ServerUserName : task.ClientUserName;
-            string platformId = source == SourceEnum.Server ? GetPlatformId(task.ServerCode) : GetPlatformId(task.ClientCode);
+            string userName = task.UserName;
+            string platformId = GetPlatformId(task.PlatformCode);
 
             return userName != loginResponse.userName || platformId != loginResponse.companyPlatformID;
+        }
+
+        /// <summary>
+        /// 翻转玩法名称
+        /// </summary>
+        /// <param name="cateName"></param>
+        /// <returns></returns>
+        public static string ReversePlatCateName(string cateName)
+        {
+            if (cateName.Contains("大"))
+            {
+                return cateName.Replace("大", "小");
+            }
+
+            if (cateName.Contains("小"))
+            {
+                return cateName.Replace("小", "大");
+            }
+
+            if (cateName.Contains("单"))
+            {
+                return cateName.Replace("单", "双");
+            }
+
+            if (cateName.Contains("双"))
+            {
+                return cateName.Replace("双", "单");
+            }
+
+            if (cateName.Contains("龙"))
+            {
+                return cateName.Replace("龙", "虎");
+            }
+
+            if (cateName.Contains("虎"))
+            {
+                return cateName.Replace("虎", "龙");
+            }
+
+            return cateName;
         }
     }
 }

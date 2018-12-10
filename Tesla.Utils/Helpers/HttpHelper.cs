@@ -81,6 +81,56 @@ namespace Tesla.Utils
             return result;
         }
 
+        /// <summary>  
+        /// 创建POST方式的HTTP请求  
+        /// </summary>  
+        /// <param name="url">请求的URL</param>  
+        /// <param name="cookies">随同HTTP请求发送的Cookie信息，如果不需要身份验证可以为空</param>  
+        /// <returns></returns>  
+        public static string HttpGet(string url, Dictionary<string, string> headerDic, CookieCollection cookies)
+        {
+            HttpWebRequest request;
+            if (url.StartsWith("https"))
+            {
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback((a, b, c, d) => { return true; });
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                request = WebRequest.Create(url) as HttpWebRequest;
+                request.ProtocolVersion = HttpVersion.Version10;
+            }
+            else
+            {
+                request = WebRequest.Create(url) as HttpWebRequest;
+            }
+
+            request.Method = "Get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1";
+            request.Timeout = 20 * 1000;
+
+            if (headerDic != null && headerDic.Count != 0)
+            {
+                foreach (KeyValuePair<string, string> pair in headerDic)
+                {
+                    request.Headers.Add(pair.Key, pair.Value);
+                }
+            }
+
+            if (cookies != null)
+            {
+                request.CookieContainer = new CookieContainer();
+                request.CookieContainer.Add(cookies);
+            }
+
+            string result = string.Empty;
+            HttpWebResponse reponse = request.GetResponse() as HttpWebResponse;
+            using (StreamReader reader = new StreamReader(reponse.GetResponseStream(), Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// HTTP GET方式请求数据.
         /// </summary>
