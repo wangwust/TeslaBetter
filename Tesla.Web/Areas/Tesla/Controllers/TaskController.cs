@@ -84,6 +84,38 @@ namespace Tesla.Web.Areas.Tesla.Controllers
         }
 
         /// <summary>
+        /// 更新或新增操作
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="keyValue"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetSCState(int keyValue, int state)
+        {
+            AppTask task = new AppTask { ID = keyValue, SCState = state };
+            int result = TaskApp.UpdateSCState(task);
+            return Auto(result);
+        }
+
+        /// <summary>
+        /// 更新或新增操作
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="keyValue"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [HandlerAjaxOnly]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetFTState(int keyValue, int state)
+        {
+            AppTask task = new AppTask { ID = keyValue, FTState = state };
+            int result = TaskApp.UpdateFTState(task);
+            return Auto(result);
+        }
+
+        /// <summary>
         /// 测试登录
         /// </summary>
         /// <param name="code"></param>

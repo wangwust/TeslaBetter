@@ -136,6 +136,7 @@ namespace Tesla.Utils
         /// <returns></returns>
         public static string GetLocation(string ip)
         {
+            /*
             string res = "";
             try
             {
@@ -166,6 +167,8 @@ namespace Tesla.Utils
                 res = "";
             }
             return res;
+            */
+            return "";
         }
         /// <summary>
         /// 百度接口

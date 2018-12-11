@@ -19,18 +19,27 @@
                 { label: '名称', name: 'Name', width: 60, align: 'left' },
                 { label: '创建时间', name: 'CreateTime', width: 120, align: 'left' },
                 { label: '修改时间', name: 'UpdateTime', width: 120, align: 'left', sortable: false },
-                { label: '每天开始时间', name: 'StartHour', width: 100, align: 'left', sortable: false },
-                { label: '每天结束时间', name: 'EndHour', width: 100, align: 'left', sortable: false },
+                { label: '开始时间', name: 'StartHour', width: 100, align: 'left', sortable: false },
+                { label: '结束时间', name: 'EndHour', width: 100, align: 'left', sortable: false },
                 { label: '单注金额', name: 'SingleMoney', width: 60, align: 'left', sortable: false },
                 { label: '平台代码', name: 'PlatformCode', width: 100, align: 'left', sortable: false },
-                { label: '接口', name: 'PlatformApi', width: 200, align: 'left', sortable: false },
                 { label: '用户名', name: 'UserName', width: 80, align: 'left', sortable: false },
-                { label: '客户端平台代码', name: 'ClientCode', width: 100, align: 'left', sortable: false },
-                { label: '客户端接口', name: 'ClientApi', width: 200, align: 'left', sortable: false },
-                { label: '客户端用户名', name: 'ClientUserName', width: 80, align: 'left', sortable: false },
-                //{ label: '客户端用户密码', name: 'ClientUserPwd', width: 80, align: 'left', sortable: false },
-                //{ label: '客户端设备', name: 'ClientDeviceType', width: 60, align: 'left', sortable: false },
+                { label: 'IP', name: 'IP', width: 200, align: 'left', sortable: false },
+                { label: '止损期数', name: 'MaxFailedCount', width: 80, align: 'left', sortable: false },
+                { label: '长龙下限', name: 'MinLongQueueCount', width: 80, align: 'left', sortable: false },
                 { label: '上次停止原因', name: 'LastStopReasonTxt', width: 100, align: 'left', sortable: false },
+                {
+                    label: "SC状态", name: "SCState", width: 60, align: "center",
+                    formatter: function (cellvalue) {
+                        return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                },
+                {
+                    label: "FT状态", name: "FTState", width: 60, align: "center",
+                    formatter: function (cellvalue) {
+                        return cellvalue == true ? "<i class=\"fa fa-toggle-on\"></i>" : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                },
                 {
                     label: "状态", name: "State", width: 60, align: "center",
                     formatter: function (cellvalue) {
@@ -54,7 +63,9 @@
             url: "/Tesla/Task/Form?keyValue=" + keyValue,
             width: "750px",
             height: "520px",
-            btn: null
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
         });
     }
 
@@ -88,6 +99,66 @@
         });
     }
 
+    function btn_SCdisabled() {
+        var keyValue = $("#gridList").jqGridRowValue().ID;
+        $.modalConfirm("注：您确定要【停止】SC吗？", function (r) {
+            if (r) {
+                $.submitForm({
+                    url: "/Tesla/Task/SetSCState",
+                    param: { keyValue: keyValue, state: 0 },
+                    success: function () {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                })
+            }
+        });
+    }
+
+    function btn_SCenabled() {
+        var keyValue = $("#gridList").jqGridRowValue().ID;
+        $.modalConfirm("注：您确定要【启动】SC任务吗？", function (r) {
+            if (r) {
+                $.submitForm({
+                    url: "/Tesla/Task/SetSCState",
+                    param: { keyValue: keyValue, state: 1 },
+                    success: function () {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                })
+            }
+        });
+    }
+
+    function btn_FTdisabled() {
+        var keyValue = $("#gridList").jqGridRowValue().ID;
+        $.modalConfirm("注：您确定要【停止】FT任务吗？", function (r) {
+            if (r) {
+                $.submitForm({
+                    url: "/Tesla/Task/SetFTState",
+                    param: { keyValue: keyValue, state: 0 },
+                    success: function () {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                })
+            }
+        });
+    }
+
+    function btn_FTenabled() {
+        var keyValue = $("#gridList").jqGridRowValue().ID;
+        $.modalConfirm("注：您确定要【启动】FT任务吗？", function (r) {
+            if (r) {
+                $.submitForm({
+                    url: "/Tesla/Task/SetFTState",
+                    param: { keyValue: keyValue, state: 1 },
+                    success: function () {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                })
+            }
+        });
+    }
+
 </script>
 
 <div class="topPanel">
@@ -102,6 +173,12 @@
                 <li class="split"></li>
                 <li><a id="NF-disabled" authorize="yes" onclick="btn_disabled()"><i class="fa fa-stop-circle"></i>停止</a></li>
                 <li><a id="NF-enabled" authorize="yes" onclick="btn_enabled()"><i class="fa fa-play-circle"></i>启动</a></li>
+                <li class="split"></li>
+                <li><a id="SC-disabled" authorize="yes" onclick="btn_SCdisabled()"><i class="fa fa-stop-circle"></i>停止SC</a></li>
+                <li><a id="SC-enabled" authorize="yes" onclick="btn_SCenabled()"><i class="fa fa-play-circle"></i>启动SC</a></li>
+                <li class="split"></li>
+                <li><a id="FT-disabled" authorize="yes" onclick="btn_FTdisabled()"><i class="fa fa-stop-circle"></i>停止FT</a></li>
+                <li><a id="FT-enabled" authorize="yes" onclick="btn_FTenabled()"><i class="fa fa-play-circle"></i>启动FT</a></li>
             </ul>
             <a href="javascript:;" class="close"></a>
         </div>

@@ -57,16 +57,41 @@ namespace Tesla.App
         }
 
         /// <summary>
+        /// 更新SC状态
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static int UpdateSCState(AppTask task)
+        {
+            string sql = "update app_task set SCState = @SCState, UpdateTime=now() where ID=@ID";
+            return DBHelper.Execute(sql, task);
+        }
+
+        /// <summary>
+        /// 更新FT状态
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static int UpdateFTState(AppTask task)
+        {
+            string sql = "update app_task set FTState = @FTState, UpdateTime=now() where ID=@ID";
+            return DBHelper.Execute(sql, task);
+        }
+
+        /// <summary>
         /// 更新
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         public static int SubmitForm(AppTask model)
         {
-            string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, SingleMoney=@SingleMoney, ServerCode=@ServerCode, "
-                       + "ServerApi=@ServerApi, ServerUserName=@ServerUserName, ServerUserPwd=@ServerUserPwd, ServerDeviceType=@ServerDeviceType, ServerIP=@ServerIP, "
-                       + "ServerMaxNumCount=@ServerMaxNumCount, ServerMinNumCount=@ServerMinNumCount, ClientCode=@ClientCode, ClientApi=@ClientApi, "
-                       + "ClientUserName=@ClientUserName, ClientUserPwd=@ClientUserPwd, ClientDeviceType=@ClientDeviceType, ClientIP=@ClientIP where ID=@ID";
+            //string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, SingleMoney=@SingleMoney, ServerCode=@ServerCode, "
+            //           + "ServerApi=@ServerApi, ServerUserName=@ServerUserName, ServerUserPwd=@ServerUserPwd, ServerDeviceType=@ServerDeviceType, ServerIP=@ServerIP, "
+            //           + "ServerMaxNumCount=@ServerMaxNumCount, ServerMinNumCount=@ServerMinNumCount, ClientCode=@ClientCode, ClientApi=@ClientApi, "
+            //           + "ClientUserName=@ClientUserName, ClientUserPwd=@ClientUserPwd, ClientDeviceType=@ClientDeviceType, ClientIP=@ClientIP where ID=@ID";
+            string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, SingleMoney=@SingleMoney, PlatformCode=@PlatformCode, "
+                       + "PlatformApi=@PlatformApi, UserName=@UserName, UserPwd=@UserPwd, DeviceType=@DeviceType, IP=@IP, "
+                       + "MaxFailedCount=@MaxFailedCount, MinLongQueueCount=@MinLongQueueCount where ID=@ID";
             return DBHelper.Execute(sql, model);
         }
     }

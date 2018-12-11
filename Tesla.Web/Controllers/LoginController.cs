@@ -89,7 +89,7 @@ namespace Tesla.Web.Controllers
                         RoleId = userEntity.F_RoleId,
                         LoginIPAddress = NetHelper.Ip
                     };
-                    operatorModel.LoginIPAddressName = NetHelper.GetLocation(operatorModel.LoginIPAddress);
+                    //operatorModel.LoginIPAddressName = NetHelper.GetLocation(operatorModel.LoginIPAddress);
                     operatorModel.LoginTime = DateTime.Now;
                     operatorModel.LoginToken = DESHelper.Encrypt(Guid.NewGuid().ToString());
 

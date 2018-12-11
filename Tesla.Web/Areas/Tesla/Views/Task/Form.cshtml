@@ -32,27 +32,6 @@
                 }
             });
         }
-
-        $('#wizard').wizard().on('change', function (e, data) {
-            var $finish = $("#btn_finish");
-            var $next = $("#btn_next");
-            if (data.direction == "next") {
-                switch (data.step) {
-                    case 2:
-                        if (!$('#form1').formValid()) {
-                            return false;
-                        }
-                        $finish.show();
-                        $next.hide();
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                $finish.hide();
-                $next.show();
-            }
-        });
     });
 
     function submitForm() {
@@ -69,37 +48,18 @@
         })
     }
 
-    function serverLogin() {
-        var code = $("#ServerCode").val();
-        var api = $("#ServerApi").val();
-        var userName = $("#ServerUserName").val();
-        var pwd = $("#ServerUserPwd").val();
-        var device = $("#ServerDeviceType").val();
-        var ttip = $("#ServerIP").val();
+    function testLogin() {
+        var code = $("#PlatformCode").val();
+        var api = $("#PlatformApi").val();
+        var userName = $("#UserName").val();
+        var pwd = $("#UserPwd").val();
+        var device = $("#DeviceType").val();
+        var ttip = $("#IP").val();
         if (code == '' || api == '' || userName == '' || pwd == '' || ttip == '') {
             $.alert("参数填写不完整");
             return;
         }
 
-        testLogin(code, api, userName, pwd, device, ttip);
-    }
-
-    function clientLogin() {
-        var code = $("#ClientCode").val();
-        var api = $("#ClientApi").val();
-        var userName = $("#ClientUserName").val();
-        var pwd = $("#ClientUserPwd").val();
-        var device = $("#ClientDeviceType").val();
-        var ttip = $("#ClientIP").val();
-        if (code == '' || api == '' || userName == '' || pwd == '' || ttip == '') {
-            $.alert("参数填写不完整");
-            return;
-        }
-
-        testLogin(code, api, userName, pwd, device, ttip);
-    }
-
-    function testLogin(code, api, userName, pwd, device, ttip) {
         $.submitForm({
             url: "/Tesla/Task/TestLogin",
             param: { code: code, api: api, userName: userName, pwd: pwd, device: device, ttip: ttip },
@@ -118,8 +78,6 @@
         <div id="wizard" class="wizard" data-target="#wizard-steps" style="border-left: none; border-top: none; border-right: none;">
             <ul class="steps">
                 <li data-target="#step-1" class="active"><span class="step">1</span>基本信息<span class="chevron"></span></li>
-                <li data-target="#step-2"><span class="step">2</span>服务端<span class="chevron"></span></li>
-                <li data-target="#step-3"><span class="step">3</span>客户端<span class="chevron"></span></li>
             </ul>
         </div>
         <div class="step-content" id="wizard-steps" style="border-left: none; border-bottom: none; border-right: none;">
@@ -127,162 +85,75 @@
                 <div class="alert alert-danger" style="text-align: left; margin-bottom: 10px;">
                     <i class="fa fa-warning alert-dismissible" style="position: relative; top: 1px; font-size: 15px; padding-right: 5px;"></i>
                     请填写任务基本信息！
+                    <a class="btn btn-success" onclick="testLogin()">测试登录</a>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">基本信息</h3>
-                    </div>
-                    <div class="panel-body" style="width: 98%;">
+                    <div style="padding-top: 15px;padding-bottom: 15px; margin-right: 30px;">
                         <table class="form">
                             <tr>
                                 <th class="formTitle">任务名称</th>
                                 <td class="formValue">
                                     <input id="Name" name="Name" type="text" class="form-control required" placeholder="请输入任务名称" />
                                 </td>
-                            </tr>
-                            <tr>
                                 <th class="formTitle">单注金额</th>
                                 <td class="formValue">
                                     <input id="SingleMoney" name="SingleMoney" type="text" class="form-control required" placeholder="请输入单注金额" />
                                 </td>
                             </tr>
                             <tr>
-                                <th class="formTitle">每日几点开始</th>
+                                <th class="formTitle">几点开始</th>
                                 <td class="formValue">
                                     <input id="StartHour" name="StartHour" type="text" class="form-control required" placeholder="请输入每日几点开始" />
                                 </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">每日几点结束</th>
+                                <th class="formTitle">几点结束</th>
                                 <td class="formValue">
                                     <input id="EndHour" name="EndHour" type="text" class="form-control required" placeholder="请输入每日几点结束" />
                                 </td>
                             </tr>
                             <tr>
-                                <th class="formTitle">服务端号码数下限</th>
-                                <td class="formValue">
-                                    <input id="ServerMinNumCount" name="ServerMinNumCount" type="text" class="form-control required" placeholder="请输入服务端号码数下限" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">服务端号码数上限</th>
-                                <td class="formValue">
-                                    <input id="ServerMaxNumCount" name="ServerMaxNumCount" type="text" class="form-control required" placeholder="请输入服务端号码数上限" />
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="step-pane" id="step-2">
-                <div class="alert alert-danger" style="text-align: left; margin-bottom: 10px;">
-                    <i class="fa fa-warning alert-dismissible" style="position: relative; top: 1px; font-size: 15px; padding-right: 5px;"></i>
-                    请填写任务服务端信息！
-                    <a class="btn btn-success" onclick="serverLogin()">测试登录</a>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">服务端信息</h3>
-                    </div>
-                    <div class="panel-body" style="width: 98%;">
-                        <table class="form">
-                            <tr>
                                 <th class="formTitle">平台代码</th>
                                 <td class="formValue">
-                                    @Html.DropDownList("ServerCode", codeList, new { @class = "form-control required", @id = "ServerCode", @name = "ServerCode" })
+                                    @Html.DropDownList("PlatformCode", codeList, new { @class = "form-control required", @id = "PlatformCode", @name = "PlatformCode" })
                                 </td>
-                            </tr>
-                            <tr>
                                 <th class="formTitle">接口地址</th>
                                 <td class="formValue">
-                                    <input id="ServerApi" name="ServerApi" type="text" class="form-control required" placeholder="请输入接口地址" />
+                                    <input id="PlatformApi" name="PlatformApi" type="text" class="form-control required" placeholder="请输入接口地址" />
                                 </td>
                             </tr>
                             <tr>
                                 <th class="formTitle">用户名</th>
                                 <td class="formValue">
-                                    <input id="ServerUserName" name="ServerUserName" type="text" class="form-control required" placeholder="请输入用户名" />
+                                    <input id="UserName" name="UserName" type="text" class="form-control required" placeholder="请输入用户名" />
                                 </td>
-                            </tr>
-                            <tr>
                                 <th class="formTitle">用户密码</th>
                                 <td class="formValue">
-                                    <input id="ServerUserPwd" name="ServerUserPwd" type="text" class="form-control required" placeholder="请输入用户密码" />
+                                    <input id="UserPwd" name="UserPwd" type="text" class="form-control required" placeholder="请输入用户密码" />
                                 </td>
                             </tr>
                             <tr>
                                 <th class="formTitle">登录IP</th>
                                 <td class="formValue">
-                                    <input id="ServerIP" name="ServerIP" type="text" class="form-control required" placeholder="请输入登录IP" />
+                                    <input id="IP" name="IP" type="text" class="form-control required" placeholder="请输入登录IP" />
+                                </td>
+                                <th class="formTitle">设备类型</th>
+                                <td class="formValue">
+                                    @Html.DropDownList("DeviceType", deviceList, new { @class = "form-control required", @id = "DeviceType", @name = "DeviceType" })
                                 </td>
                             </tr>
                             <tr>
-                                <th class="formTitle">设备类型</th>
+                                <th class="formTitle">止损期数</th>
                                 <td class="formValue">
-                                    @Html.DropDownList("ServerDeviceType", deviceList, new { @class = "form-control required", @id = "ServerDeviceType", @name = "ServerDeviceType" })
+                                    <input id="MaxFailedCount" name="MaxFailedCount" type="text" class="form-control required" placeholder="请输入止损期数" />
+                                </td>
+                                <th class="formTitle">长龙下限</th>
+                                <td class="formValue">
+                                    <input id="MinLongQueueCount" name="MinLongQueueCount" type="text" class="form-control required" placeholder="请输入长龙下限" />
                                 </td>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="step-pane" id="step-3">
-                <div class="alert alert-danger" style="text-align: left; margin-bottom: 10px;">
-                    <i class="fa fa-warning alert-dismissible" style="position: relative; top: 1px; font-size: 15px; padding-right: 5px;"></i>
-                    请填写任务客户端信息！
-                    <a class="btn btn-success" onclick="clientLogin()">测试登录</a>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">客户端信息</h3>
-                    </div>
-                    <div class="panel-body" style="width: 98%;">
-                        <table class="form">
-                            <tr>
-                                <th class="formTitle">平台代码</th>
-                                <td class="formValue">
-                                    @Html.DropDownList("ClientCode", codeList, new { @class = "form-control required", @id = "ClientCode", @name = "ClientCode" })
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">接口地址</th>
-                                <td class="formValue">
-                                    <input id="ClientApi" name="ClientApi" type="text" class="form-control required" placeholder="请输入接口地址" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">用户名</th>
-                                <td class="formValue">
-                                    <input id="ClientUserName" name="ClientUserName" type="text" class="form-control required" placeholder="请输入用户名" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">用户密码</th>
-                                <td class="formValue">
-                                    <input id="ClientUserPwd" name="ClientUserPwd" type="text" class="form-control required" placeholder="请输入用户密码" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">登录IP</th>
-                                <td class="formValue">
-                                    <input id="ClientIP" name="ClientIP" type="text" class="form-control required" placeholder="请输入登录IP" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="formTitle">设备类型</th>
-                                <td class="formValue">
-                                    @Html.DropDownList("ClientDeviceType", deviceList, new { @class = "form-control required", @id = "ClientDeviceType", @name = "ClientDeviceType" })
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-button" id="wizard-actions">
-            <a id="btn_last" disabled class="btn btn-default btn-prev">上一步</a>
-            <a id="btn_next" class="btn btn-default btn-next">下一步</a>
-            <a id="btn_finish" class="btn btn-default" style="display: none;" onclick="submitForm()">完成</a>
         </div>
     </div>
 </form>
