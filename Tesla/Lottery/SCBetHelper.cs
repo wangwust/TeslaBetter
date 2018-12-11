@@ -101,22 +101,31 @@ namespace Tesla
         /// <param name="cateName"></param>
         /// <param name="totalMoney"></param>
         /// <returns></returns>
-        public static BetParams GetBetParams(AppTask task, LongQueue longQueue, decimal singleMoney, int lotteryId, ref decimal totalMoney, ref string cateName)
+        public static BetParams GetBetParams(AppTask task, List<LongQueue> longQueueList, decimal singleMoney, int lotteryId, ref decimal totalMoney, ref string cateName)
         {
-            string remark = TeslaHelper.ReversePlatCateName(longQueue.PlayCateName);
-            GamePlay gamePlay = GamePlayApp.GetPlay(remark, lotteryId);
-
-            decimal money = singleMoney * Convert.ToDecimal(Math.Pow(2, Math.Min(gamePlay.LongQueue, task.MaxFailedCount)));
-            totalMoney = money;
-            cateName = remark;
-
-            SCBetInfo betInfo = new SCBetInfo { money = money, playId = gamePlay.PlayID };
-            List<SCBetInfo> list = new List<SCBetInfo> { betInfo };
-
-            BetParams betParam = new BetParams
+            BetParams betParam = new BetParams();
+            List<SCBetInfo> list = new List<SCBetInfo>();
+            foreach (LongQueue longQueue in longQueueList)
             {
-                BetInfo = list.ToJson()
-            };
+                string remark = TeslaHelper.ReversePlatCateName(longQueue.PlayCateName);
+                GamePlay gamePlay = GamePlayApp.GetPlay(remark, lotteryId);
+                if (gamePlay == null)
+                {
+                    continue;
+                }
+
+                decimal money = singleMoney * Convert.ToDecimal(Math.Pow(2, Math.Min(gamePlay.LongQueue, task.MaxFailedCount)));
+                totalMoney += money;
+                cateName += remark + ",";
+
+                SCBetInfo betInfo = new SCBetInfo { money = money, playId = gamePlay.PlayID };
+                list.Add(betInfo);
+            }
+
+            if (list.Count > 0)
+            {
+                betParam.BetInfo = list.ToJson();
+            }
 
             return betParam;
         }

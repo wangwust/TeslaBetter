@@ -20,6 +20,17 @@ namespace Tesla.App
         }
 
         /// <summary>
+        /// ResetLongQueue
+        /// </summary>
+        /// <param name="lotteryId"></param>
+        /// <returns></returns>
+        public static int ResetLongQueue(int lotteryId)
+        {
+            string sql = $"update app_game_play set UpdateTime=now(), LongQueue=0 where LotteryID={lotteryId} and LongQueue > 0";
+            return DBHelper.Execute(sql);
+        }
+
+        /// <summary>
         /// SetLongQueue
         /// </summary>
         /// <param name="remark"></param>
@@ -27,8 +38,8 @@ namespace Tesla.App
         /// <returns></returns>
         public static int SetLongQueue(string remark, int lotteryId)
         {
-            string sql = $"update app_game_play set UpdateTime=now(), LongQueue=0 where LotteryID={lotteryId} and Remark!='{remark}';"
-                       + $"update app_game_play set UpdateTime=now(), LongQueue=LongQueue + 1 where LotteryID={lotteryId} and Remark='{remark}'";
+            string sql = $"update app_game_play set UpdateTime=now(), LongQueue=0 where LotteryID={lotteryId} and Remark not in({remark});"
+                       + $"update app_game_play set UpdateTime=now(), LongQueue=LongQueue + 1 where LotteryID={lotteryId} and Remark in({remark})";
             return DBHelper.Execute(sql);
         }
     }

@@ -69,8 +69,16 @@ namespace Tesla.Service
             }
 
             this._loginResponse = response.data;
-            Task.Run(() => { this.Bet(appTask, LotteryEnum.SC); });
-            Task.Run(() => { this.Bet(appTask, LotteryEnum.FT); });
+
+            Task.Run(() =>
+            {
+                this.Bet(appTask, LotteryEnum.SC);
+            });
+
+            Task.Run(() =>
+            {
+                this.Bet(appTask, LotteryEnum.FT);
+            });
         }
 
         /// <summary>
@@ -79,11 +87,12 @@ namespace Tesla.Service
         /// <param name="task"></param>
         private void Bet(AppTask task, int lotteryId)
         {
-            List<string> bettedIssueList = new List<string>();
             while (true)
             {
                 try
                 {
+                    task = task.Update();
+
                     #region BOOL
                     if (DateTime.Now.Hour < task.StartHour || DateTime.Now.Hour > task.EndHour)
                     {
@@ -102,56 +111,85 @@ namespace Tesla.Service
                     ApiResponse<LotteryInfoReponse> response = this.GetLotteryInfo(task, lotteryId);
                     if (!response.IsSucceed)
                     {
+                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryId}]获取LotteryInfo失败，原因：{response.msg}", SourceEnum.Server, task.UserName);
                         Thread.Sleep(5 * 1000);
                         continue;
                     }
 
-                    LotteryInfo lotteryInfo = response.data.lotteryInfo;
                     Stopwatch stopWatch = new Stopwatch();
                     stopWatch.Start();
-                    TimeSpan remainTime = lotteryInfo.nextTime - DateTime.Now;
-                    if (remainTime.TotalSeconds - lotteryInfo.blockTime < 40 || bettedIssueList.Contains(lotteryInfo.curPeriodNum))
+                    LotteryInfo lotteryInfo = response.data.lotteryInfo;
+
+                    int remainSeconds = (int)(lotteryInfo.remainTime - lotteryInfo.sysTime);
+
+                    //是否TZ过
+                    if (TeslaHelper.IsExist(lotteryId, lotteryInfo.curPeriodNum))
                     {
-                        Thread.Sleep(remainTime);
+                        if (remainSeconds > 0)
+                        {
+                            Thread.Sleep(remainSeconds * 1000);
+                        }
                         continue;
                     }
 
-                    //if (Convert.ToInt64(lotteryInfo.curPeriodNum) - Convert.ToInt64(lotteryInfo.openResult.openPeriod) != 1)
-                    //{
-                    //    Thread.Sleep(5 * 1000);
-                    //    continue;
-                    //}
+                    int tzTime = remainSeconds - lotteryInfo.blockTime;
+                    if (tzTime < 40)
+                    {
+                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryInfo.lotteryId}]第[{lotteryInfo.curPeriodNum}]期，距离FP仅剩{tzTime}秒，跳过TZ", SourceEnum.Server, task.UserName);
+
+                        if (remainSeconds > 0)
+                        {
+                            Thread.Sleep(remainSeconds * 1000);
+                        }
+                        continue;
+                    }
+
+                    if (Convert.ToInt64(lotteryInfo.curPeriodNum) - Convert.ToInt64(lotteryInfo.openResult.openPeriod) != 1)
+                    {
+                        Thread.Sleep(5 * 1000);
+                        continue;
+                    }
                     #endregion
 
                     #region LongQueue
                     ApiResponse<LongQueueResponse> longQueueResponse = this.GetLongQueue(task, lotteryId);
                     if (!response.IsSucceed)
                     {
+                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryId}]第[{lotteryInfo.curPeriodNum}]期，获取LongQueue失败，原因：{longQueueResponse.msg}", SourceEnum.Server, task.UserName);
                         Thread.Sleep(5 * 1000);
                         continue;
                     }
 
-                    LongQueue longQueue = longQueueResponse.data.LongQueueList.Where(o => o.Cont >= task.MinLongQueueCount).FirstOrDefault();
-                    if (longQueue == null)
+                    List<LongQueue> longQueueList = longQueueResponse.data.LongQueueList.Where(o => o.Cont >= task.MinLongQueueCount).ToList();
+                    if (longQueueList.Count == 0)
                     {
-                        Thread.Sleep(remainTime);
+                        //重置所有LongQueue
+                        GamePlayApp.ResetLongQueue(lotteryId);
+                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryId}]第[{lotteryInfo.curPeriodNum}]期，没有大于{task.MinLongQueueCount}期的LongQueue，跳过TZ", SourceEnum.Server, task.UserName);
+
+                        if (remainSeconds > 0)
+                        {
+                            Thread.Sleep(remainSeconds * 1000);
+                        }
                         continue;
                     }
                     #endregion
 
                     #region TZ
-                    bool isBet = this.Bet(task, lotteryInfo, longQueue);
-                    if (isBet)
-                    {
-                        bettedIssueList.Add(lotteryInfo.curPeriodNum);
-                    }
+                    bool isBet = this.Bet(task, lotteryInfo, longQueueList);
+
                     stopWatch.Stop();
-                    Thread.Sleep(remainTime - stopWatch.Elapsed);
+                    int tmpMiliSeconds = (int)(remainSeconds * 1000 - stopWatch.ElapsedMilliseconds);
+                    if (tmpMiliSeconds > 0)
+                    {
+                        Thread.Sleep(tmpMiliSeconds);
+                    }
                     #endregion
                 }
                 catch (Exception ex)
                 {
                     TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"[SC]TZ异常。详情：{ex.ToString()}", SourceEnum.Server, task.UserName);
+                    Thread.Sleep(10 * 1000);
                 }
             }
         }
@@ -161,12 +199,17 @@ namespace Tesla.Service
         /// </summary>
         /// <param name="task"></param>
         /// <param name="lotteryInfo"></param>
-        /// <param name="longQueue"></param>
+        /// <param name="longQueueList"></param>
         /// <returns></returns>
-        private bool Bet(AppTask task, LotteryInfo lotteryInfo, LongQueue longQueue)
+        private bool Bet(AppTask task, LotteryInfo lotteryInfo, List<LongQueue> longQueueList)
         {
             decimal totalMoney = 0; string cateName = "";
-            BetParams betParam = SCBetHelper.GetBetParams(task, longQueue, task.SingleMoney, lotteryInfo.lotteryId, ref totalMoney, ref cateName);
+            BetParams betParam = SCBetHelper.GetBetParams(task, longQueueList, task.SingleMoney, lotteryInfo.lotteryId, ref totalMoney, ref cateName);
+            if (string.IsNullOrEmpty(betParam.BetInfo))
+            {
+                return true;
+            }
+
             betParam.Token = this._loginResponse.token;
             betParam.UserName = this._loginResponse.userName;
             betParam.PlatformId = this._loginResponse.companyPlatformID;
@@ -179,7 +222,7 @@ namespace Tesla.Service
             ApiResponse<BetResponse> response = BetHelper.Bet(betParam);
             if (!response.IsSucceed)
             {
-                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"第[{lotteryInfo.curPeriodNum}]期[{lotteryInfo.lotteryId}]TZ失败。信息：" + response.msg, SourceEnum.Server, task.UserName);
+                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"[{lotteryInfo.lotteryId}]第[{lotteryInfo.curPeriodNum}]期TZ失败。信息：" + response.msg, SourceEnum.Server, task.UserName);
                 if (response.msg.Contains("余额"))
                 {
                     TeslaHelper.StopTask(task.ID, TaskStopReason.ServerMoney);
@@ -202,9 +245,9 @@ namespace Tesla.Service
             else
             {
                 decimal serverBalance = TeslaHelper.GetBalance(task.PlatformApi, task.IP, this._loginResponse);
-                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"第[{lotteryInfo.curPeriodNum}]期[{lotteryInfo.lotteryId}]TZ成功。TZ总额：{totalMoney}", SourceEnum.Server, task.UserName);
-                TeslaHelper.SaveBetOrder(task, totalMoney, lotteryInfo.curPeriodNum, serverBalance, cateName, lotteryInfo.lotteryName);
-                TeslaHelper.UpdateLongQueue(task, longQueue, lotteryInfo.lotteryId);
+                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryInfo.lotteryId}]第[{lotteryInfo.curPeriodNum}]期TZ成功。TZ总额：{totalMoney}", SourceEnum.Server, task.UserName);
+                TeslaHelper.SaveBetOrder(task, totalMoney, lotteryInfo.curPeriodNum, serverBalance, cateName.TrimEnd(','), lotteryInfo.lotteryName);
+                TeslaHelper.UpdateLongQueue(task, longQueueList, lotteryInfo.lotteryId);
             }
             return true;
         }

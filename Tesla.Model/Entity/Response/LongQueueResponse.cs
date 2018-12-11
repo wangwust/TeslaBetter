@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Tesla.Utils;
 
 namespace Tesla.Model
@@ -16,7 +17,25 @@ namespace Tesla.Model
         /// <summary>
         /// LongQueue
         /// </summary>
-        public List<LongQueue> LongQueueList => this.clInfo.ToEntity<List<LongQueue>>();
+        public List<LongQueue> LongQueueList
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.clInfo))
+                {
+                    return new List<LongQueue>();
+                }
+
+                try
+                {
+                    return this.clInfo.ToEntity<List<LongQueue>>();
+                }
+                catch (Exception ex)
+                {
+                    return new List<LongQueue>();
+                }
+            }
+        }
     }
 
     /// <summary>

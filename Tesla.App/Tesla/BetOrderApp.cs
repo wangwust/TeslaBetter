@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Tesla.Model;
 using Tesla.Utils;
 
@@ -29,6 +30,19 @@ namespace Tesla.App
         public static List<BetOrder> GetList(PagerInfo pagerInfo)
         {
             return DBHelper.GetPageList<BetOrder>(pagerInfo);
+        }
+
+        /// <summary>
+        /// 是否TZ过
+        /// </summary>
+        /// <param name="lotteryId"></param>
+        /// <param name="issue"></param>
+        /// <returns></returns>
+        public static bool IsExist(string lotteryName, string issue)
+        {
+            //string sql = $"select ID from app_betorder where Issue={issue} and LotteryName='{lotteryName}'";
+            string sql = $"select ID from app_betorder where Issue={issue}";
+            return DBHelper.GetOne<BetOrder>(sql) != null;
         }
     }
 }

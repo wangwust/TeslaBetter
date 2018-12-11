@@ -387,18 +387,31 @@ namespace Tesla
         }
 
         /// <summary>
+        /// 是否TZ过
+        /// </summary>
+        /// <param name="lotteryId"></param>
+        /// <param name="issue"></param>
+        /// <returns></returns>
+        public static bool IsExist(int lotteryId, string issue)
+        {
+            return BetOrderApp.IsExist(GetLotteryName(lotteryId), issue);
+        }
+
+        /// <summary>
         /// 更新长龙
         /// </summary>
         /// <param name="task"></param>
-        /// <param name="longQueue"></param>
+        /// <param name="longQueueList"></param>
         /// <param name="lotteryId"></param>
-        public static void UpdateLongQueue(AppTask task, LongQueue longQueue, int lotteryId)
+        public static void UpdateLongQueue(AppTask task, List<LongQueue> longQueueList, int lotteryId)
         {
-            string remark = ReversePlatCateName(longQueue.PlayCateName);
+            List<string> remarkList = (from l in longQueueList select ReversePlatCateName(l.PlayCateName)).ToList();
+            string remark = remarkList.Aggregate("", (c, r) => c + "'" + r + "',").TrimEnd(',');
+
             int result = GamePlayApp.SetLongQueue(remark, lotteryId);
             if (result < 0)
             {
-                WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"设置长龙失败。ID：{lotteryId}，Remark：{remark}", SourceEnum.Server, task.UserName);
+                WriteLog(task.ID, task.Name, LogTypeEnum.ERROR, $"设置长龙失败。ID：{lotteryId}，Remark：{remarkList}", SourceEnum.Server, task.UserName);
             }
         }
 
