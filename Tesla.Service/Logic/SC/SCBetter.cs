@@ -77,7 +77,7 @@ namespace Tesla.Service
 
             Task.Run(() =>
             {
-                this.Bet(appTask, LotteryEnum.FT);
+                //this.Bet(appTask, LotteryEnum.FT);
             });
         }
 
@@ -94,6 +94,12 @@ namespace Tesla.Service
                     task = task.Update();
 
                     #region BOOL
+                    if (task.State != 1)
+                    {
+                        Thread.Sleep(10 * 1000);
+                        continue;
+                    }
+
                     if (DateTime.Now.Hour < task.StartHour || DateTime.Now.Hour > task.EndHour)
                     {
                         Thread.Sleep(60 * 60 * 1000);
@@ -102,7 +108,7 @@ namespace Tesla.Service
 
                     if ((lotteryId == LotteryEnum.SC && task.SCState != 1) || (lotteryId == LotteryEnum.FT && task.FTState != 1))
                     {
-                        Thread.Sleep(5 * 60 * 1000);
+                        Thread.Sleep(10 * 1000);
                         continue;
                     }
                     #endregion
@@ -153,9 +159,23 @@ namespace Tesla.Service
 
                     #region LongQueue
                     ApiResponse<LongQueueResponse> longQueueResponse = this.GetLongQueue(task, lotteryId);
-                    if (!response.IsSucceed)
+                    if (!longQueueResponse.IsSucceed)
                     {
                         TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[{lotteryId}]第[{lotteryInfo.curPeriodNum}]期，获取LongQueue失败，原因：{longQueueResponse.msg}", SourceEnum.Server, task.UserName);
+                        if (longQueueResponse.msg.ToLower().Contains("token"))
+                        {
+                            ApiResponse<LoginResponse> newLogin = this.Login(task);
+                            if (newLogin.IsSucceed)
+                            {
+                                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"当前用户掉线，已经重新DL", SourceEnum.Server, task.Name);
+                                this._loginResponse = newLogin.data;
+                            }
+                            else
+                            {
+                                TeslaHelper.StopTask(task.ID, TaskStopReason.ServerToken);
+                                TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"当前用户掉线，重新DL失败，已将任务：{task.Name}停止", SourceEnum.Server, task.UserName);
+                            }
+                        }
                         Thread.Sleep(5 * 1000);
                         continue;
                     }
@@ -278,6 +298,7 @@ namespace Tesla.Service
                     response = LoginHelper.Login(param);
                     if (response.IsSucceed)
                     {
+                        TeslaHelper.WriteLog(task.ID, task.Name, LogTypeEnum.INFO, $"[SCBetter]用户DL成功，用户：{task.UserName}。当前YUE：{response.data.accountBalance}", SourceEnum.Server, task.UserName);
                         break;
                     }
                     else
