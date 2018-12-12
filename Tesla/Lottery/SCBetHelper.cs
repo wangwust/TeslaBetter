@@ -114,6 +114,11 @@ namespace Tesla
                     continue;
                 }
 
+                if(gamePlay.LongQueue > task.MaxFailedCount)
+                {
+                    continue;
+                }
+
                 decimal money = singleMoney * Convert.ToDecimal(Math.Pow(2, Math.Min(gamePlay.LongQueue, task.MaxFailedCount)));
                 totalMoney += money;
                 cateName += remark + ",";

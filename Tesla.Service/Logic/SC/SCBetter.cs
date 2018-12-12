@@ -93,7 +93,7 @@ namespace Tesla.Service
                 {
                     task = task.Update();
 
-                    #region BOOL
+                    #region 1、BOOL
                     if (task.State != 1)
                     {
                         Thread.Sleep(10 * 1000);
@@ -113,7 +113,7 @@ namespace Tesla.Service
                     }
                     #endregion
 
-                    #region LotteryInfo
+                    #region 2、LotteryInfo
                     ApiResponse<LotteryInfoReponse> response = this.GetLotteryInfo(task, lotteryId);
                     if (!response.IsSucceed)
                     {
@@ -157,7 +157,7 @@ namespace Tesla.Service
                     }
                     #endregion
 
-                    #region LongQueue
+                    #region 3、LongQueue
                     ApiResponse<LongQueueResponse> longQueueResponse = this.GetLongQueue(task, lotteryId);
                     if (!longQueueResponse.IsSucceed)
                     {
@@ -195,7 +195,7 @@ namespace Tesla.Service
                     }
                     #endregion
 
-                    #region TZ
+                    #region 4、TZ
                     bool isBet = this.Bet(task, lotteryInfo, longQueueList);
 
                     stopWatch.Stop();
