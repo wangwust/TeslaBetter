@@ -77,7 +77,7 @@ namespace Tesla.Service
 
             Task.Run(() =>
             {
-                //this.Bet(appTask, LotteryEnum.FT);
+                this.Bet(appTask, LotteryEnum.FT);
             });
         }
 
