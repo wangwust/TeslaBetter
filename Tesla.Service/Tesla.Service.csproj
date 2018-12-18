@@ -64,6 +64,7 @@
     <Compile Include="Logic\LHC\LHCServerWork.cs" />
     <Compile Include="Logic\LHC\LHCClientWork.cs" />
     <Compile Include="Logic\MainWork.cs" />
+    <Compile Include="Logic\Result\BJKCPicker.cs" />
     <Compile Include="Logic\SC\SCBetter.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

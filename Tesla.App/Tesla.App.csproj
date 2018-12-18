@@ -71,12 +71,14 @@
     <Compile Include="SystemSecurity\FilterIPApp.cs" />
     <Compile Include="SystemSecurity\LogApp.cs" />
     <Compile Include="Tesla\AppLogApp.cs" />
+    <Compile Include="Tesla\BetInfoApp.cs" />
     <Compile Include="Tesla\BetOrderApp.cs" />
     <Compile Include="Tesla\BetParamApp.cs" />
     <Compile Include="Tesla\AppUserApp.cs" />
     <Compile Include="Tesla\GamePlayApp.cs" />
     <Compile Include="Tesla\IPApp.cs" />
     <Compile Include="Tesla\PlatformApp.cs" />
+    <Compile Include="Tesla\ResultApp.cs" />
     <Compile Include="Tesla\WithdrawApp.cs" />
     <Compile Include="Tesla\ChargeApp.cs" />
     <Compile Include="Tesla\TaskApp.cs" />

@@ -40,7 +40,7 @@ namespace Tesla.Model
         /// <summary>
         /// 单注金额
         /// </summary>
-        public decimal SingleMoney { get; set; }
+        //public decimal SingleMoney { get; set; }
 
         /// <summary>
         /// 平台代码
@@ -75,12 +75,12 @@ namespace Tesla.Model
         /// <summary>
         /// 连续亏损多少局就不再翻倍
         /// </summary>
-        public int MaxFailedCount { get; set; }
+        //public int MaxFailedCount { get; set; }
 
         /// <summary>
         /// 长龙期数下限
         /// </summary>
-        public int MinLongQueueCount { get; set; }
+        //public int MinLongQueueCount { get; set; }
 
         /// <summary>
         /// 上次停止的原因

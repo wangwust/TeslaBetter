@@ -19,6 +19,8 @@ namespace Tesla.Test
             SCBetter better = new SCBetter();
             better.Start();
 
+            //BJKCPicker.Run();
+
             //bool b = EmailHelper.Send("1277955953@qq.com", "测试", "这是一条测试邮件");
 
             Console.Read();

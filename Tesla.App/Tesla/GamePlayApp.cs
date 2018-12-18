@@ -10,6 +10,18 @@ namespace Tesla.App
         /// <summary>
         /// GetPlay
         /// </summary>
+        /// <param name="playId"></param>
+        /// <param name="lotteryId"></param>
+        /// <returns></returns>
+        public static GamePlay GetPlay(int playId, int lotteryId)
+        {
+            string sql = $"select * from app_game_play where LotteryID={lotteryId} and PlayID={playId}";
+            return DBHelper.GetOne<GamePlay>(sql);
+        }
+
+        /// <summary>
+        /// GetPlay
+        /// </summary>
         /// <param name="remark"></param>
         /// <param name="lotteryId"></param>
         /// <returns></returns>

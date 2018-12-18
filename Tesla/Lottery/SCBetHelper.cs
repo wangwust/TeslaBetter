@@ -96,34 +96,26 @@ namespace Tesla
         /// </summary>
         /// <param name="task"></param>
         /// <param name="longQueue"></param>
-        /// <param name="singleMoney"></param>
         /// <param name="lotteryId"></param>
         /// <param name="cateName"></param>
         /// <param name="totalMoney"></param>
         /// <returns></returns>
-        public static BetParams GetBetParams(AppTask task, List<LongQueue> longQueueList, decimal singleMoney, int lotteryId, ref decimal totalMoney, ref string cateName)
+        public static BetParams GetBetParams(AppTask task, List<AppBetInfo> betInfoList, int lotteryId, ref decimal totalMoney, ref string cateName)
         {
             BetParams betParam = new BetParams();
             List<SCBetInfo> list = new List<SCBetInfo>();
-            foreach (LongQueue longQueue in longQueueList)
+            foreach (AppBetInfo model in betInfoList)
             {
-                string remark = TeslaHelper.ReversePlatCateName(longQueue.PlayCateName);
-                GamePlay gamePlay = GamePlayApp.GetPlay(remark, lotteryId);
+                GamePlay gamePlay = GamePlayApp.GetPlay(model.PlayId, lotteryId);
                 if (gamePlay == null)
                 {
                     continue;
                 }
 
-                if(gamePlay.LongQueue > task.MaxFailedCount)
-                {
-                    continue;
-                }
+                totalMoney += model.Money;
+                cateName += gamePlay.Remark + ",";
 
-                decimal money = singleMoney * Convert.ToDecimal(Math.Pow(2, Math.Min(gamePlay.LongQueue, task.MaxFailedCount)));
-                totalMoney += money;
-                cateName += remark + ",";
-
-                SCBetInfo betInfo = new SCBetInfo { money = money, playId = gamePlay.PlayID };
+                SCBetInfo betInfo = new SCBetInfo { money = model.Money, playId = model.PlayId };
                 list.Add(betInfo);
             }
 

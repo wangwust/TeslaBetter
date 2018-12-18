@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+
+    List<SelectListItem> playList = Tesla.Model.GamePlayEnum.XYFTDic.Select(c => new SelectListItem
+    {
+        Value = c.Key,
+        Text = c.Value
+    }).ToList();
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        if (!!keyValue) {
+            $.ajax({
+                url: "/Tesla/FTBetInfo/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/Tesla/FTBetInfo/SubmitForm?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function () {
+                $.currentWindow().$("#gridList").resetSelection();
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        })
+    }
+</script>
+
+<form id="form1">
+    <div class="widget-body">
+        <div id="wizard" class="wizard" data-target="#wizard-steps" style="border-left: none; border-top: none; border-right: none;">
+            <ul class="steps">
+                <li data-target="#step-1" class="active"><span class="step">1</span>基本信息<span class="chevron"></span></li>
+            </ul>
+        </div>
+        <div class="step-content" id="wizard-steps" style="border-left: none; border-bottom: none; border-right: none;">
+            <div class="step-pane active" id="step-1" style="margin: 10px; margin-bottom: 0px;">
+                <div class="alert alert-danger" style="text-align: left; margin-bottom: 10px;">
+                    <i class="fa fa-warning alert-dismissible" style="position: relative; top: 1px; font-size: 15px; padding-right: 5px;"></i>
+                    请填写任务基本信息！
+                </div>
+                <div class="panel panel-default">
+                    <div style="padding-top: 15px;padding-bottom: 15px; margin-right: 30px;">
+                        <table class="form">
+                            <tr>
+                                <th class="formTitle">菜种</th>
+                                <td class="formValue">
+                                    <input id="LotteryID" name="LotteryID" type="text" class="form-control required" readonly="readonly" value="55" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="formTitle">金额</th>
+                                <td class="formValue">
+                                    <input id="Money" name="Money" type="text" class="form-control required" placeholder="金额" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="formTitle">玩法</th>
+                                <td class="formValue">
+                                    @Html.DropDownList("PlayId", playList, new { @class = "form-control required", @id = "PlayId", @name = "PlayId" })
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
