@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -64,6 +64,7 @@
     <Compile Include="Logic\LHC\LHCServerWork.cs" />
     <Compile Include="Logic\LHC\LHCClientWork.cs" />
     <Compile Include="Logic\MainWork.cs" />
+    <Compile Include="Logic\Result\BJKCPicker.cs" />
     <Compile Include="Logic\SC\SCBetter.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

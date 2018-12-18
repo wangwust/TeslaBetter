@@ -89,9 +89,8 @@ namespace Tesla.App
             //           + "ServerApi=@ServerApi, ServerUserName=@ServerUserName, ServerUserPwd=@ServerUserPwd, ServerDeviceType=@ServerDeviceType, ServerIP=@ServerIP, "
             //           + "ServerMaxNumCount=@ServerMaxNumCount, ServerMinNumCount=@ServerMinNumCount, ClientCode=@ClientCode, ClientApi=@ClientApi, "
             //           + "ClientUserName=@ClientUserName, ClientUserPwd=@ClientUserPwd, ClientDeviceType=@ClientDeviceType, ClientIP=@ClientIP where ID=@ID";
-            string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, SingleMoney=@SingleMoney, PlatformCode=@PlatformCode, "
-                       + "PlatformApi=@PlatformApi, UserName=@UserName, UserPwd=@UserPwd, DeviceType=@DeviceType, IP=@IP, "
-                       + "MaxFailedCount=@MaxFailedCount, MinLongQueueCount=@MinLongQueueCount where ID=@ID";
+            string sql = "update app_task set UpdateTime=now(), StartHour=@StartHour, EndHour=@EndHour, Name=@Name, PlatformCode=@PlatformCode, "
+                       + "PlatformApi=@PlatformApi, UserName=@UserName, UserPwd=@UserPwd, DeviceType=@DeviceType, IP=@IP where ID=@ID";
             return DBHelper.Execute(sql, model);
         }
     }

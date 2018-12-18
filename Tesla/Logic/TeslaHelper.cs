@@ -84,12 +84,6 @@ namespace Tesla
                 return false;
             }
 
-            if (appTask.SingleMoney <= 0)
-            {
-                errorMsg = "单注金额不合法";
-                return false;
-            }
-
             if (appTask.PlatformCode.IsEmpty())
             {
                 errorMsg = "平台代码不能为空";
@@ -371,10 +365,10 @@ namespace Tesla
                 TaskName = task.Name,
                 Issue = Convert.ToInt64(issueNo),
                 Number = list.Aggregate(string.Empty, (c, r) => c + r + ",").TrimEnd(','),
-                SingleMoney = task.SingleMoney,
-                TotalMoney = task.SingleMoney * list.Count,
+                //SingleMoney = task.SingleMoney,
+                //TotalMoney = task.SingleMoney * list.Count,
                 Source = source,
-                BeforeBalance = balance + task.SingleMoney * list.Count,
+                //BeforeBalance = balance + task.SingleMoney * list.Count,
                 AfterBalance = balance,
                 UserName = task.UserName
             };
@@ -430,7 +424,7 @@ namespace Tesla
                 TaskName = task.Name,
                 Issue = Convert.ToInt64(issueNo),
                 Number = cateName,
-                SingleMoney = task.SingleMoney,
+                //SingleMoney = task.SingleMoney,
                 TotalMoney = totalMoney,
                 Source = 1,
                 BeforeBalance = balance + totalMoney,
