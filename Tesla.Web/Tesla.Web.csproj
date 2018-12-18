@@ -485,6 +485,7 @@
     <Content Include="Areas\Tesla\Views\Platform\Form.cshtml" />
     <Content Include="Areas\SystemManage\Views\IP\Index.cshtml" />
     <None Include="Properties\PublishProfiles\1.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
